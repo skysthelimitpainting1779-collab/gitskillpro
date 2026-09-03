@@ -1,0 +1,10 @@
+{
+  "risk": "R3",
+  "tokenBudget": 140,
+  "items": [
+    { "id": "scope", "kind": "scope", "estimatedTokens": 40, "required": true, "reason": "task scope" },
+    { "id": "acceptance", "kind": "acceptance", "estimatedTokens": 50, "required": true, "reason": "acceptance criteria" },
+    { "id": "rollback", "kind": "recovery", "estimatedTokens": 60, "required": true, "reason": "rollback evidence" },
+    { "id": "history", "kind": "history", "estimatedTokens": 400, "priority": 1, "reason": "older discussion" }
+  ]
+}

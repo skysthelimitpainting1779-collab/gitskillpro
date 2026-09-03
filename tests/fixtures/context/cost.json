@@ -1,0 +1,12 @@
+{
+  "inputTokens": 900,
+  "outputTokens": 150,
+  "retrievedTokens": 250,
+  "cachedTokens": 350,
+  "avoidedTokens": 1500,
+  "taskSucceeded": true,
+  "qualityScoreBefore": 0.9,
+  "qualityScoreAfter": 0.92,
+  "evidenceCompletenessBefore": 0.95,
+  "evidenceCompletenessAfter": 0.95
+}
