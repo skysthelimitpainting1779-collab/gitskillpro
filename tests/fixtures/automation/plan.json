@@ -1,0 +1,18 @@
+{
+  "actor": {
+    "id": "agent-checkpoint",
+    "kind": "checkpoint",
+    "source": "gitskillpro",
+    "trigger": "agent_checkpoint",
+    "authorities": ["auto-stage", "auto-commit"],
+    "allowedBranches": ["agent/*"],
+    "allowedPaths": ["src/**"],
+    "requireIsolatedWorktree": true
+  },
+  "operation": "checkpoint-commit",
+  "scope": {
+    "branch": "agent/eng-42",
+    "paths": ["src/a.ts"],
+    "isolatedWorktree": true
+  }
+}
