@@ -1,13 +1,13 @@
 ---
 name: git-skill-pro
-description: Use when an agent must inspect, plan, implement, review, recover, or safely coordinate software work involving Git, repositories, pull requests, CI, deployment, databases, work trackers, or concurrent agents.
+description: Use when an agent must inspect, plan, implement, review, recover, or safely coordinate software work involving Git, repositories, pull requests, CI, deployment, databases, work trackers, automation, or concurrent agents.
 ---
 
 # GitSkillPro
 
 ## Operating principle
 
-Use the **minimum sufficient context for a correct, evidence-backed decision**. Discover the environment and actual capabilities before acting; never pretend a local, remote, provider, work-tracker, or persistence capability exists when it has not been proven.
+Use the **minimum sufficient context for a correct, evidence-backed decision**. Discover the environment and actual capabilities before acting; never pretend a local, remote, provider, work-tracker, automation, or persistence capability exists when it has not been proven.
 
 ## Universal lifecycle
 
@@ -18,15 +18,16 @@ Use the **minimum sufficient context for a correct, evidence-backed decision**. 
 1. Resolve project/repository/work-item scope.
 2. Read repository-native instructions and relevant GitSkillPro specs/configuration.
 3. Discover runtime and capabilities; see `references/environment.md` when the environment is ambiguous.
-4. Resolve the tracker/work-graph **authority map** before mixing Linear, Beads, GitHub Issues/Projects, or another tracker. Load `references/workflow.md` for work-management tasks.
-5. If Beads is present, feature-detect its installed version/capabilities and storage/concurrency mode; load `references/beads.md`.
-6. Decide whether the project is healthy normal work, greenfield bootstrap, takeover/recovery, or incident mode. For broken CI, stale/failed/superseded PRs, tangled branches, tracker drift or unclear production truth, load `references/recovery.md` and perform archaeology/inventory before cleanup.
-7. For CI/workflow failures load `references/ci.md`; for deployment/provider work load `references/deployment.md`; for schemas/migrations/data-state work load `references/databases.md`.
-8. For large repositories, logs, PR histories, docs retrieval, recovery archaeology, or multi-agent handoffs load `references/context-economy.md` and use **progressive retrieval** instead of broad context dumps.
-9. Snapshot only the state needed for the current decision.
-10. Classify risk before mutation; use `references/primitive-safety.md` for foundation Git primitives.
-11. Assume concurrency and revalidate state immediately before material operations.
-12. Demand evidence from the layer that can actually prove the claimed postcondition.
+4. Discover **repository automation/background writers** before staging, committing, rebasing, recovery cleanup, or integration. If hooks, bots, watchers, generators, auto-commit scripts, CI writers, or other automation actors exist, load `references/automation.md`.
+5. Resolve the tracker/work-graph **authority map** before mixing Linear, Beads, GitHub Issues/Projects, or another tracker. Load `references/workflow.md` for work-management tasks.
+6. If Beads is present, feature-detect its installed version/capabilities and storage/concurrency mode; load `references/beads.md`.
+7. Decide whether the project is healthy normal work, greenfield bootstrap, takeover/recovery, or incident mode. For broken CI, stale/failed/superseded PRs, tangled branches, tracker drift or unclear production truth, load `references/recovery.md` and perform archaeology/inventory before cleanup.
+8. For CI/workflow failures load `references/ci.md`; for deployment/provider work load `references/deployment.md`; for schemas/migrations/data-state work load `references/databases.md`.
+9. For large repositories, logs, PR histories, docs retrieval, recovery archaeology, or multi-agent handoffs load `references/context-economy.md` and use **progressive retrieval** instead of broad context dumps.
+10. Snapshot only the state needed for the current decision.
+11. Classify risk before mutation; use `references/primitive-safety.md` for foundation Git primitives.
+12. Assume concurrency and revalidate state immediately before material operations.
+13. Demand evidence from the layer that can actually prove the claimed postcondition.
 
 ## Non-negotiable behavior
 
@@ -34,15 +35,30 @@ Use the **minimum sufficient context for a correct, evidence-backed decision**. 
 - Separate **code correctness**, **CI health**, **merge safety**, **deployment health**, **database state**, and **production health**. A green check in one layer is not proof for another layer.
 - Keep observation, inference, recommendation, attempted mutation, verification, and proven persistence distinct.
 - Prefer reversible operations and isolated branches/worktrees.
-- Treat work trackers, Git/SCM, CI, deployment providers, and databases as separate authorities linked by evidence.
+- Treat work trackers, Git/SCM, CI, deployment providers, databases, and repository automation as separate authorities/actors linked by evidence.
 - Do not create uncontrolled bidirectional synchronization between Linear, Beads, GitHub, or another tracker. A mirror is not automatically canonical truth.
 - A connected GitHub/provider tool may prove remote/provider facts but must never pretend it can see local untracked files, stash, index state, reflog, or worktree dirtiness.
 - Local Git may prove repository facts but must never claim production/deployment/database health without provider evidence.
-- Load large primitive/provider references only when the current task needs them.
 - Unknown or newly discovered mutation primitives default to denied until classified.
 - Preserve unknown as a valid result when evidence is insufficient; do not turn uncertainty into invented causality, identity, health or compatibility.
 - Never expose raw secret values in logs/evidence/context packets; secret name/presence/scope metadata is separate evidence.
 - Never reduce context merely to hit a token target when doing so removes required safety or acceptance evidence.
+
+## Repository automation
+
+Treat every hook, watcher, generator, dependency/release bot, CI writer, IDE plugin, hosted agent, auto-commit script, and other **background writer** as a concurrent automation actor. Configuration presence proves an actor signal; it does not prove credentials or permission.
+
+Automation authorities are strictly separate and ordered: **auto-stage → auto-commit → auto-push → auto-pr → auto-review → auto-merge → auto-deploy**. Authority at one stage never implies authority at a later stage. A bot allowed to create a local checkpoint commit is not therefore allowed to push it, open or approve a PR, merge, or deploy.
+
+Prefer explicit staging paths. Broad `git add -A`/repository-wide staging is unsafe unless ownership of every changed path is proven. Never let automation absorb another agent's work, unrelated untracked files, secrets, local config, logs/caches, or unowned generated artifacts.
+
+A guarded automated **checkpoint commit** requires a proven isolated **worktree**, named task branch, exact expected HEAD, explicit task-owned path allowlist, `auto-stage` + `auto-commit` authority, immediate state revalidation, staged-diff verification, normal hook execution, and post-commit reinspection. It produces local commit evidence only and never implies `auto-push` or remote persistence.
+
+Hooks are part of the repository environment. A rejecting hook is a failure to diagnose; do not automatically use hook bypass or `--no-verify`. If a hook changes files, re-inspect the final committed path set and reject unexpected paths.
+
+Perform **loop prevention** analysis before enabling recursive writers. Detect self-trigger or multi-actor cycles such as `push → CI → generate → commit → push`. Use provenance/event/path guards, dedicated branches, concurrency control, no-op checks, and **idempotency**. For generators, repeated execution with the same input identity should converge to the same semantic/content output hash; repeated new diffs are defects unless intentionally designed and separately authorized.
+
+Background direct pushes to the default/protected branch and background force-push are denied by default. Push, PR, review, merge and deploy each require a fresh expected-state/policy gate.
 
 ## Context Economy
 
@@ -68,11 +84,11 @@ Agent comments and code reviews are different artifacts. A progress/plan/CI comm
 
 Assume the environment is non-exclusive. Prefer `one task → one branch → one worktree → one agent → one evidence packet` when persistent local worktree capability is proven **and** the active work-graph store is safe for concurrent writers. When local isolation is unavailable, use remote branch/session isolation and explicitly record that local isolation was unavailable.
 
-Multiple Git worktrees do not make embedded/single-writer or unknown Beads storage safe for simultaneous agent writes.
+Multiple Git worktrees do not make embedded/single-writer or unknown Beads storage safe for simultaneous agent writes. Also account for repository automation/background writers before assuming a worktree is exclusive.
 
 ## CI diagnosis
 
-Before editing application code for a red check, determine whether the failure belongs to source, tests, type/static analysis, dependency resolution, workflow configuration, permissions, secrets, runtime/toolchain, runner, cache/artifacts, concurrency, external provider/quota, deployment, database dependencies, repository-rule/check wiring, or unknown.
+Before editing application code for a red check, determine whether the failure belongs to source, tests, type/static analysis, dependency resolution, workflow configuration, permissions, secrets, runtime/toolchain, runner, cache/artifacts, concurrency, external provider/quota, deployment, database dependencies, repository-rule/check wiring, repository automation, or unknown.
 
 Separate **root cause from unrelated hardening findings**. For example, immutable action pinning may be a valid security improvement while the actual failing cause is a missing secret or type error.
 
@@ -106,7 +122,7 @@ For material migrations prove target environment, current migration version, pen
 
 When a project is already tangled, perform archaeology before cleanup:
 
-1. inventory trackers/work graphs, branches/worktrees, PRs/reviews, CI/rules, deployments and migrations;
+1. inventory trackers/work graphs, branches/worktrees, PRs/reviews, CI/rules, deployments, migrations, and repository automation/background writers;
 2. build an evidence graph across issue/bead → branch → commits → PR → review → CI → merge → deployment/database state;
 3. classify current, stale, duplicate, superseded, abandoned, orphaned, conflicted, baseline-failed, PR-specific-failed and unknown artifacts without using title/timestamp shortcuts;
 4. preserve explicit duplicate/supersession relationships;
@@ -116,7 +132,7 @@ When a project is already tangled, perform archaeology before cleanup:
 
 ## Greenfield mode
 
-For a new project, establish repository instructions, explicit tracker authority, issue contract, isolation conventions, CI baseline, PR/review policy, repository-rule audit, deployment/database discovery, Definition of Ready/Done and context policy before feature work. Prove the workflow with one representative end-to-end issue.
+For a new project, establish repository instructions, explicit tracker authority, issue contract, isolation conventions, repository-automation policy, CI baseline, PR/review policy, repository-rule audit, deployment/database discovery, Definition of Ready/Done and context policy before feature work. Prove the workflow with one representative end-to-end issue.
 
 Do not invent a license, maintainers, security contacts, deployment account, database ownership or credentials.
 
@@ -126,6 +142,6 @@ Never claim persistence merely because an attempted command or provider call ret
 
 ## Implemented surface
 
-The current implementation includes environment/capability discovery, risk/policy/evidence contracts, read-only local Git inspection/audit, explicit work-authority mapping, Linear/Beads workflow normalization, guarded worktree delegation, work-graph audit, greenfield planning, recovery archaeology/planning, provider-config detection, GitHub host-evidence normalization, CI causality audit, autonomous PR audit, Vercel/Cloudflare/Hostinger deployment normalization/audit, database/migration discovery, SQL migration risk classification, expand/contract planning, database preflight audit, minimum-sufficient context planning, progressive retrieval, content-addressed context caching, checkpoints/bounded subagent handoffs, host-native Context7 planning/normalization, token-quality telemetry, and CLI read/audit/plan commands.
+The current implementation includes environment/capability discovery, risk/policy/evidence contracts, read-only local Git inspection/audit, work-authority mapping, Linear/Beads workflow normalization, guarded worktree delegation, work-graph audit, greenfield planning, recovery archaeology/planning, provider detection, CI/PR/deployment/database audits, Context Economy/Context7 planning, repository-automation authority/discovery/audit, loop/idempotency analysis, and **guarded local checkpoint commits** in proven isolated worktrees with hooks honored and no remote push.
 
-Provider writes, Linear mutation, Beads claim/update mutation, GitHub PR creation/review/merge through provider adapters, recovery cleanup mutations, deployment/database mutation, direct Context7 network transport, real MCP transport, and frontier execution features remain separately gated until their implementation layers are proven.
+Remote automation writes (`auto-push`, `auto-pr`, `auto-review`, `auto-merge`, `auto-deploy`), Linear/Beads mutations, recovery cleanup mutations, deployment/database mutation, direct Context7 network transport, real MCP transport, and frontier execution features remain separately gated until their implementation layers are proven.
