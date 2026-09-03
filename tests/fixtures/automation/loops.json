@@ -1,0 +1,12 @@
+{
+  "actors": [
+    {
+      "id": "generator-ci",
+      "triggerEvents": ["push"],
+      "emittedEvents": ["push"],
+      "provenanceGuard": false,
+      "pathGuard": false,
+      "concurrencyGuard": false
+    }
+  ]
+}

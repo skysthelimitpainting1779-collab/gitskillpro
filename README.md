@@ -1,6 +1,6 @@
 # GitSkillPro
 
-GitSkillPro is a universal software-workflow and repository-operations system for coding agents. It combines an Agent Skill, shared policy/decision engine, CLI, MCP/plugin architecture, and capability-aware adapters for work graphs, Git/SCM, CI, autonomous PR review, deployment, infrastructure, databases, project recovery, and context/token efficiency.
+GitSkillPro is a universal software-workflow and repository-operations system for coding agents. It combines an Agent Skill, shared policy/decision engine, CLI, MCP/plugin architecture, and capability-aware adapters for work graphs, Git/SCM, CI, autonomous PR review, deployment, infrastructure, databases, project recovery, context/token efficiency, and repository automation.
 
 The core rule is: **use the safest capability that is actually proven, keep each system's truth separate, and require evidence for every material postcondition.**
 
@@ -17,9 +17,10 @@ The current stacked implementation includes:
 - CI causality audit and autonomous PR merge-readiness audit;
 - Vercel, Cloudflare and Hostinger deployment normalization/audit;
 - database engine/provider/migration-framework discovery, SQL risk classification, expand/contract planning and DB preflight/rollback audits;
-- **Context Economy**: minimum-sufficient context plans, progressive retrieval, content-addressed cache/freshness, evidence-safe checkpoints, bounded subagent packets, host-native Context7 request planning, and token/quality telemetry.
+- Context Economy: minimum-sufficient context plans, progressive retrieval, content-addressed cache/freshness, evidence-safe checkpoints, bounded subagent packets, host-native Context7 request planning, and token/quality telemetry;
+- **Repository Automation**: hook/bot/watcher/script discovery, separate auto-stage/commit/push/PR/review/merge/deploy authorities, staging/concurrency audits, trigger-loop detection, idempotency checks, and guarded local checkpoint commits in proven isolated worktrees.
 
-Provider writes and production mutations remain separately authority-gated. The current provider/context surfaces are inspection, normalization, audit, or planning unless explicitly documented otherwise.
+The automation stack deliberately exposes **no automatic remote push, PR creation, review, merge or deployment execution**. Its only new mutation is a policy-gated local checkpoint commit that stages explicit owned paths, honors hooks, revalidates expected HEAD/state, and never pushes.
 
 ## Development
 
@@ -45,6 +46,12 @@ gsp audit pr <snapshot.json> [--json]
 gsp audit deploy <snapshot.json> [--json]
 gsp audit db <snapshot.json> [--json]
 
+gsp automation discover [--json]
+gsp automation audit <snapshot.json> [--json]
+gsp automation plan <snapshot.json> [--json]
+gsp automation detect-loops <snapshot.json> [--json]
+gsp automation verify-idempotency <snapshot.json> [--json]
+
 gsp bootstrap plan [--json]
 gsp delegate plan <issue-id> <title> [--json]
 gsp recover project <snapshot.json> [--json]
@@ -58,7 +65,42 @@ gsp cost report <snapshot.json> [--json]
 gsp plan <intent> [--json]
 ```
 
-Snapshot commands consume JSON as data only. They do not execute snapshot-provided scripts or silently mutate GitHub, Linear, Beads, providers, deployments, or databases.
+Snapshot commands consume JSON as data only. They do not execute snapshot-provided scripts or silently mutate GitHub, Linear, Beads, providers, deployments, databases, or repository automation.
+
+## Repository automation model
+
+Automation is treated as a concurrent actor, not a convenience script:
+
+```text
+auto-stage
+  -> auto-commit
+  -> auto-push
+  -> auto-pr
+  -> auto-review
+  -> auto-merge
+  -> auto-deploy
+```
+
+Every arrow is a new authority gate. Commit permission never grants push permission.
+
+Before repository mutation, GitSkillPro can discover Git hooks/custom `core.hooksPath`, Husky/Lefthook/pre-commit, package scripts, GitHub workflows with Git writes, dependency/release bot configs, and common repository scripts. Detected behavior is evidence—not authorization.
+
+The guarded checkpoint transaction is:
+
+```text
+PROVE ISOLATED WORKTREE + TASK BRANCH
+  -> PROVE EXPECTED HEAD
+  -> PROVE EXPLICIT PATH OWNERSHIP
+  -> REVALIDATE WORKING SET
+  -> STAGE ONLY ALLOWLISTED PATHS
+  -> HASH/VERIFY STAGED DIFF
+  -> NORMAL GIT COMMIT (HOOKS RUN)
+  -> RE-INSPECT COMMITTED PATHS + HEAD
+  -> RETURN LOCAL COMMIT EVIDENCE
+  -> DO NOT PUSH
+```
+
+A failed hook is diagnosed; GitSkillPro does not retry with `--no-verify`. Trigger graphs are checked for self-trigger/multi-actor cycles, and generators can be checked for semantic idempotency across repeated identical inputs.
 
 ## Authority model
 
@@ -68,6 +110,7 @@ A common layered configuration is:
 Linear              -> project outcome / human-visible intent
 Beads               -> executable dependency graph / blockers / claims
 GitHub               -> branches / commits / PRs / reviews / checks / merge
+Repository automation-> hooks / bots / background writers / local mutation actors
 CI                   -> CI execution evidence
 Deployment provider  -> deployment/revision/runtime evidence
 Database provider    -> schema/data/recovery evidence
@@ -78,29 +121,16 @@ Mirrors are projections unless explicitly made canonical. Similar names alone ne
 
 ## Context Economy
 
-GitSkillPro does not equate a large context window with better reasoning. It plans the minimum sufficient packet and expands only when uncertainty survives narrower evidence.
+GitSkillPro plans the minimum sufficient packet and expands only when uncertainty survives narrower evidence. Context caches are keyed to the evidence identity that controls freshness: Git SHA/blob, PR head, CI run/attempt, deployment ID, migration version, tracker revision, or Context7 library/version/query.
 
-```text
-TASK / POLICY
-  -> CURRENT IDENTITIES + ACCEPTANCE CRITERIA
-  -> NARROW ARTIFACT / DIFF / FAILED STEP
-  -> DIRECTLY RELATED EVIDENCE
-  -> WIDER HISTORY ONLY IF STILL UNRESOLVED
-  -> CHECKPOINT + REFERENCES
-```
-
-Context caches are keyed to the evidence identity that controls freshness: Git SHA/blob, PR head, CI run/attempt, deployment ID, migration version, tracker revision, or Context7 library/version/query.
-
-Context7 is modeled as a host-native adapter boundary. GitSkillPro plans `resolve-library-id` then `query-docs` when needed; it does not embed Context7 credentials or send raw private code/secrets to documentation retrieval.
-
-Token savings count as successful only when task success, evidence completeness and quality are preserved.
+Context7 is modeled as a host-native adapter boundary. GitSkillPro plans library resolution/query calls; it does not embed Context7 credentials or send raw private code/secrets to documentation retrieval. Token savings count as successful only when task success, evidence completeness and quality are preserved.
 
 ## Recovery model
 
 For an inherited unhealthy project:
 
 ```text
-INVENTORY
+INVENTORY (INCLUDING AUTOMATION WRITERS)
   -> EVIDENCE GRAPH
   -> DEFAULT-BRANCH CI BASELINE
   -> CLASSIFY PRs / WORK ITEMS
@@ -131,6 +161,5 @@ The design is cumulative; newer specifications win where they conflict:
 
 ## Remaining stack layers
 
-1. **Repository automation** — auto-stage/commit/push/PR/merge/deploy actors, hooks/watchers/bots, ownership, idempotency and loop prevention.
-2. **Frontier change system** — logical Change Graph, stacked PR/merge-group semantics, proof-carrying change manifests, provenance/policy/progressive delivery abstractions.
-3. **MCP + plugin packaging** — actual MCP transport and OpenAI-compatible plugin packaging over the proven core.
+1. **Frontier change system** — logical Change Graph, stacked PR/merge-group semantics, proof-carrying change manifests, provenance/policy/progressive delivery abstractions.
+2. **MCP + plugin packaging** — actual MCP transport and OpenAI-compatible plugin packaging over the proven core.
