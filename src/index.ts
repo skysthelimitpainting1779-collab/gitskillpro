@@ -1,4 +1,4 @@
-export const GITSKILLPRO_VERSION = "0.4.0-providers";
+export const GITSKILLPRO_VERSION = "0.5.0-context";
 
 export * from "./core/types.js";
 export * from "./core/operation.js";
@@ -7,6 +7,13 @@ export * from "./core/capability-broker.js";
 export * from "./core/risk.js";
 export * from "./core/policy.js";
 export * from "./core/evidence.js";
+
+export * from "./context/types.js";
+export * from "./context/planner.js";
+export * from "./context/retrieval.js";
+export * from "./context/cache.js";
+export * from "./context/checkpoint.js";
+export * from "./context/cost.js";
 
 export * from "./work/types.js";
 export * from "./work/authority.js";
@@ -27,6 +34,7 @@ export * from "./adapters/vercel.js";
 export * from "./adapters/cloudflare.js";
 export * from "./adapters/hostinger.js";
 export * from "./adapters/database.js";
+export * from "./adapters/context7.js";
 
 export * from "./delegation/planner.js";
 export * from "./delegation/worktree.js";
