@@ -1,23 +1,24 @@
 # GitSkillPro
 
-GitSkillPro is a universal software-workflow and repository-operations system for coding agents. It combines an Agent Skill, shared policy/decision engine, CLI, MCP server, plugin packaging, and capability-aware adapters for project/issue management, Git/GitHub, CI, hosting/deployment, infrastructure, and database safety.
+GitSkillPro is a universal software-workflow and repository-operations system for coding agents. It combines an Agent Skill, shared policy/decision engine, CLI, MCP server, plugin packaging, and capability-aware adapters for project/work-graph management, Git/GitHub, CI, hosting/deployment, infrastructure, and database safety.
 
 The system is designed to work across local clones, linked worktrees, VPS/VM hosts, containers, CI runners, cloud coding agents, sandboxes, and plugin/connector-only environments without pretending capabilities exist when they do not.
 
 ## Canonical specification
 
-The current canonical design is:
+The current canonical design is cumulative:
 
 - [`SPEC.md`](./SPEC.md) — core Git/repository/CI/deployment/database operating contract.
-- [`SPEC-v0.2.md`](./SPEC-v0.2.md) — workflow orchestration, Linear/issues/projects, agent comments/reviews, greenfield bootstrap, issue-to-PR flow, and repository governance. Where the two conflict, v0.2 wins.
+- [`SPEC-v0.2.md`](./SPEC-v0.2.md) — workflow orchestration, Linear/issues/projects, agent comments/reviews, greenfield bootstrap, issue-to-PR flow, and repository governance.
+- [`SPEC-v0.3.md`](./SPEC-v0.3.md) — Beads/work-graph integration plus project takeover/recovery for broken CI, failed/stale/superseded PRs, tangled branches, conflicting tracker state, and selective salvage.
 
-Older design notes under `docs/superpowers/specs/` are supporting design history.
+The newest specification wins where requirements conflict. Older design notes under `docs/superpowers/specs/` are supporting design history.
 
 ## End-to-end operating model
 
 ```text
 PROJECT / INITIATIVE
-  -> ISSUE
+  -> ISSUE / EXECUTION GRAPH
   -> READY CHECK
   -> CLAIM / DELEGATE
   -> BRANCH + WORKTREE OR REMOTE ISOLATION
@@ -32,11 +33,24 @@ PROJECT / INITIATIVE
   -> PROJECT / MILESTONE UPDATE
 ```
 
-Each layer keeps its own truth: the issue tracker owns work state, Git/SCM owns code/integration state, CI owns verification evidence, deployment providers own runtime deployment evidence, and database providers own state/migration evidence.
+Each layer keeps its own truth. A project may use Linear as the human/product tracker, Beads as the dependency-aware agent execution graph, and GitHub as the code/review/merge system; GitSkillPro resolves an explicit authority map instead of creating uncontrolled tracker synchronization.
+
+## Operating modes
+
+GitSkillPro supports four distinct modes:
+
+- **Normal mode** — execute healthy issue-to-production workflows.
+- **Greenfield bootstrap mode** — establish tracker, repo, CI, PR, review, rules, deployment, and database flow for a new project.
+- **Takeover / recovery mode** — reconstruct and repair inherited messy projects before broad mutation.
+- **Incident mode** — prioritize service restoration and evidence preservation under incident policy.
+
+Recovery mode inventories and links issues/beads, branches, commits, PRs, reviews, CI, merges, deployments, and migrations; distinguishes default-branch CI breakage from PR-specific failures; identifies duplicates and supersession; salvages only proven useful work; reconciles tracker state; restores governance; and proves recovery with one clean end-to-end issue.
 
 ## Work-management surface
 
-Linear is first-class, with GitHub Issues/Projects as a first-class fallback/companion. GitSkillPro is designed to preserve project/issue identity, agent delegation, material agent comments, independent code reviews, branch/worktree/PR linkage, and Definition-of-Done completion evidence.
+Linear is first-class for project/issue management. Beads (`bd`) is first-class as a dependency-aware work-graph/execution adapter. GitHub Issues/Projects are a first-class fallback or companion. Other trackers fit the same capability contracts.
+
+GitSkillPro is designed to preserve project/issue identity, agent delegation, dependencies, claims, material agent comments, duplicate/supersession relationships, independent code reviews, branch/worktree/PR linkage, and Definition-of-Done completion evidence.
 
 ## Provider surface
 
