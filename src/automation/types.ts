@@ -38,6 +38,9 @@ export interface AutomationActor {
   repositoryScope?: string[];
   allowedBranches?: string[];
   allowedPaths?: string[];
+  stagePolicy?: "explicit" | "broad" | "none" | "unknown";
+  commitPolicy?: "checkpoint" | "semantic" | "generated" | "release" | "sync" | "unknown";
+  pushPolicy?: "none" | "normal" | "rewrite" | "unknown";
   requireIsolatedWorktree?: boolean;
   expectedStatePolicy?: "required" | "optional" | "unknown";
   concurrencyPolicy?: "isolated" | "locked" | "shared" | "unknown";
