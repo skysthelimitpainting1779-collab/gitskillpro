@@ -1,0 +1,8 @@
+{
+  "scope": { "repo": "o/r", "issueId": "ENG-42" },
+  "acceptedFacts": ["PR head is abc"],
+  "evidenceRefs": ["github:pr:42", "ci:100"],
+  "decisions": ["repair CI baseline before editing the PR"],
+  "unknowns": ["production deployment revision unknown"],
+  "nextAction": "inspect deployment evidence"
+}
