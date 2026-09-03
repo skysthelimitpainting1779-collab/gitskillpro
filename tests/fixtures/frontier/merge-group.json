@@ -1,0 +1,9 @@
+{
+  "mergeGroupRequired": true,
+  "prHeadSha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "mergeGroupSha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "requiredChecks": ["CI"],
+  "checks": [
+    { "name": "CI", "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "status": "success" }
+  ]
+}
