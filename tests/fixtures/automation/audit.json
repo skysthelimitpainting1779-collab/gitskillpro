@@ -1,0 +1,18 @@
+{
+  "actors": [
+    {
+      "id": "checkpoint-bot",
+      "kind": "checkpoint",
+      "source": "scripts/checkpoint.mjs",
+      "trigger": "watch",
+      "authorities": ["auto-stage", "auto-commit"],
+      "observedOperations": ["stage", "commit"],
+      "allowedPaths": ["**"],
+      "stagePolicy": "broad",
+      "expectedStatePolicy": "unknown"
+    }
+  ],
+  "sharedWritableWorktree": true,
+  "defaultBranch": "main",
+  "changedPaths": ["src/a.ts", ".env"]
+}
