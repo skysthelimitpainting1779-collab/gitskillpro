@@ -4,6 +4,31 @@ GitSkillPro is a universal software-workflow and repository-operations system fo
 
 The system is designed to work across local clones, linked worktrees, VPS/VM hosts, containers, CI runners, cloud coding agents, sandboxes, and plugin/connector-only environments without pretending capabilities exist when they do not.
 
+## Foundation status
+
+The `0.1.0` foundation is now a working **read / audit / plan** vertical slice. It includes truthful environment/capability discovery, risk and authority policy, provenance-safe evidence packets, a non-mutating local Git adapter, a Git safety audit, a portable Agent Skill, and the `gsp` CLI.
+
+Development commands:
+
+```bash
+npm ci
+npm run typecheck
+npm test
+npm run build
+node dist/cli/index.js --help
+```
+
+Working CLI surface:
+
+```text
+gsp doctor [--json]
+gsp inspect [--json]
+gsp audit git [--json]
+gsp plan <intent> [--json]
+```
+
+The foundation intentionally does **not** yet perform provider writes, Git mutations, worktree delegation execution, PR merges, deployments, database mutations, actual MCP transport, or production recovery actions. Those capabilities are layered on only after their safety/evidence adapters are implemented and tested.
+
 ## Canonical specification
 
 The current canonical design is cumulative:
@@ -87,3 +112,12 @@ DISCOVER -> SNAPSHOT -> CLASSIFY RISK -> PLAN -> CHECK AUTHORITY
          -> EMIT EVIDENCE / CHANGE MANIFEST -> CHECKPOINT/CACHE
          -> COMPLETE / RECOVER / ESCALATE
 ```
+
+## Roadmap after the foundation
+
+1. **Workflow + work graphs** — Linear, Beads, issue-to-branch/worktree-to-PR lifecycle, agent comments/reviews, greenfield bootstrap.
+2. **Recovery** — project archaeology, default-branch CI baseline diagnosis, PR classification/salvage, tracker reconciliation.
+3. **Providers + databases** — GitHub remote adapter, Vercel, Cloudflare, Hostinger, Supabase and database safety adapters.
+4. **Context economy** — Context7, progressive retrieval, cache/checkpoints, token/cost telemetry.
+5. **Automation + frontier** — auto-commit actors, Change Graph/stacked PRs, merge groups, policy-as-code, provenance/SBOM, progressive delivery, preview databases, deterministic codemods and agent protocols.
+6. **MCP + plugin packaging** — actual MCP transport and OpenAI-compatible plugin packaging over the proven core.
