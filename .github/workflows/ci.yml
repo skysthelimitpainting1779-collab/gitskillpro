@@ -34,6 +34,10 @@ jobs:
       - run: node dist/cli/index.js delegate plan ENG-42 "Add work graph" --json
       - run: node dist/cli/index.js recover project tests/fixtures/recovery/messy-project.json --json
       - run: node dist/cli/index.js recover ci tests/fixtures/recovery/messy-project.json --json
+      - run: node dist/cli/index.js context plan tests/fixtures/context/plan.json --json
+      - run: node dist/cli/index.js context checkpoint tests/fixtures/context/checkpoint.json --json
+      - run: node dist/cli/index.js docs plan tests/fixtures/context/docs.json --json
+      - run: node dist/cli/index.js cost report tests/fixtures/context/cost.json --json
       - name: Prove verification left tracked state unchanged
         run: |
           git diff --exit-code
