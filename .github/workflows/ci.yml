@@ -23,8 +23,13 @@ jobs:
       - run: node dist/cli/index.js --help
       - run: node dist/cli/index.js doctor --json
       - run: node dist/cli/index.js inspect --json
+      - run: node dist/cli/index.js detect providers --json
       - run: node dist/cli/index.js audit git --json
       - run: node dist/cli/index.js audit beads --json
+      - run: node dist/cli/index.js audit ci tests/fixtures/providers/ci.json --json
+      - run: node dist/cli/index.js audit pr tests/fixtures/providers/pr.json --json
+      - run: node dist/cli/index.js audit deploy tests/fixtures/providers/deploy.json --json
+      - run: node dist/cli/index.js audit db tests/fixtures/providers/db.json --json
       - run: node dist/cli/index.js bootstrap plan --json
       - run: node dist/cli/index.js delegate plan ENG-42 "Add work graph" --json
       - run: node dist/cli/index.js recover project tests/fixtures/recovery/messy-project.json --json

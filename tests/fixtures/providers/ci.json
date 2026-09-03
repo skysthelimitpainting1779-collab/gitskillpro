@@ -1,0 +1,9 @@
+{
+  "status": "failure",
+  "failedSteps": [
+    { "name": "typecheck", "category": "type", "logExcerpt": "error TS2345: Argument of type" }
+  ],
+  "requiredChecks": ["CI / verify"],
+  "emittedChecks": ["CI / verify"],
+  "hardeningFindings": []
+}

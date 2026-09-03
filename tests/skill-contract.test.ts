@@ -12,6 +12,9 @@ const required = [
   "skills/git-skill-pro/references/workflow.md",
   "skills/git-skill-pro/references/beads.md",
   "skills/git-skill-pro/references/recovery.md",
+  "skills/git-skill-pro/references/ci.md",
+  "skills/git-skill-pro/references/deployment.md",
+  "skills/git-skill-pro/references/databases.md",
 ];
 
 describe("repository contract", () => {
@@ -39,5 +42,9 @@ describe("repository contract", () => {
     expect(skill).toMatch(/archaeolog|inventory.*before.*cleanup/is);
     expect(skill).toMatch(/selective salvage/is);
     expect(skill).toMatch(/unknown.*valid|preserve.*unknown/is);
+    expect(skill).toMatch(/root cause.*hardening|hardening.*root cause/is);
+    expect(skill).toMatch(/provider.*success.*runtime|runtime.*provider.*success/is);
+    expect(skill).toMatch(/Git revert.*database rollback|database rollback.*Git revert/is);
+    expect(skill).toMatch(/Hostinger.*Horizons.*VPS|Hostinger.*VPS.*Horizons/is);
   });
 });

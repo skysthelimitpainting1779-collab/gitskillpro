@@ -1,4 +1,4 @@
-export const GITSKILLPRO_VERSION = "0.3.0-recovery";
+export const GITSKILLPRO_VERSION = "0.4.0-providers";
 
 export * from "./core/types.js";
 export * from "./core/operation.js";
@@ -16,15 +16,32 @@ export * from "./work/lifecycle.js";
 export * from "./work/comments.js";
 export * from "./work/review.js";
 
+export * from "./providers/types.js";
+export * from "./providers/detect.js";
+
 export * from "./adapters/local-git.js";
 export * from "./adapters/linear.js";
 export * from "./adapters/beads.js";
+export * from "./adapters/github.js";
+export * from "./adapters/vercel.js";
+export * from "./adapters/cloudflare.js";
+export * from "./adapters/hostinger.js";
+export * from "./adapters/database.js";
 
 export * from "./delegation/planner.js";
 export * from "./delegation/worktree.js";
 
 export * from "./audits/git.js";
 export * from "./audits/workgraph.js";
+export * from "./audits/ci.js";
+export * from "./audits/pr.js";
+export * from "./audits/deployment.js";
+export * from "./audits/database.js";
+
+export * from "./database/detect.js";
+export * from "./database/sql-risk.js";
+export * from "./database/migration.js";
+
 export * from "./bootstrap/greenfield.js";
 
 export * from "./recovery/types.js";

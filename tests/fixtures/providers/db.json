@@ -1,0 +1,17 @@
+{
+  "database": {
+    "provider": "postgres",
+    "domain": "database",
+    "evidenceStatus": "proven",
+    "health": "healthy",
+    "environment": "production",
+    "currentMigrationVersion": "001",
+    "recoveryCapability": "pitr",
+    "rollbackCompatibility": "compatible"
+  },
+  "pendingMigrations": [
+    { "id": "002", "order": 2, "classifications": ["additive_schema"] }
+  ],
+  "lockRisk": "low",
+  "backfillRisk": "low"
+}

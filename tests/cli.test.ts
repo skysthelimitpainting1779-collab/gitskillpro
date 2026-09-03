@@ -16,16 +16,23 @@ function capture(cwd = process.cwd()) {
 }
 
 describe("CLI", () => {
-  it("prints help including workflow and recovery commands", async () => {
+  it("prints help including workflow, recovery and provider/database commands", async () => {
     const c = capture();
     expect(await runCli(["--help"], c.io)).toBe(0);
     expect(c.stdout()).toBe(HELP);
-    expect(c.stdout()).toContain("gsp audit git");
-    expect(c.stdout()).toContain("gsp audit beads");
-    expect(c.stdout()).toContain("gsp bootstrap plan");
-    expect(c.stdout()).toContain("gsp delegate plan");
-    expect(c.stdout()).toContain("gsp recover project");
-    expect(c.stdout()).toContain("gsp recover ci");
+    for (const command of [
+      "gsp audit git",
+      "gsp audit beads",
+      "gsp bootstrap plan",
+      "gsp delegate plan",
+      "gsp recover project",
+      "gsp recover ci",
+      "gsp detect providers",
+      "gsp audit ci",
+      "gsp audit pr",
+      "gsp audit deploy",
+      "gsp audit db",
+    ]) expect(c.stdout()).toContain(command);
   });
 
   it("emits a machine-readable plan without executing it", async () => {
@@ -72,8 +79,37 @@ describe("CLI", () => {
   it("diagnoses default-branch CI baseline from a recovery snapshot", async () => {
     const c = capture();
     expect(await runCli(["recover", "ci", "tests/fixtures/recovery/messy-project.json", "--json"], c.io)).toBe(0);
-    const result = JSON.parse(c.stdout());
-    expect(result.state).toBe("baseline_broken");
+    expect(JSON.parse(c.stdout()).state).toBe("baseline_broken");
+  });
+
+  it("detects repository provider configuration signals", async () => {
+    const c = capture();
+    expect(await runCli(["detect", "providers", "--json"], c.io)).toBe(0);
+    expect(Array.isArray(JSON.parse(c.stdout()))).toBe(true);
+  });
+
+  it("audits CI evidence from JSON", async () => {
+    const c = capture();
+    expect(await runCli(["audit", "ci", "tests/fixtures/providers/ci.json", "--json"], c.io)).toBe(0);
+    expect(JSON.parse(c.stdout()).rootCauses[0].classification).toBe("type_static");
+  });
+
+  it("audits autonomous PR evidence from JSON", async () => {
+    const c = capture();
+    expect(await runCli(["audit", "pr", "tests/fixtures/providers/pr.json", "--json"], c.io)).toBe(0);
+    expect(JSON.parse(c.stdout()).mergeReady).toBe(true);
+  });
+
+  it("audits deployment evidence from JSON", async () => {
+    const c = capture();
+    expect(await runCli(["audit", "deploy", "tests/fixtures/providers/deploy.json", "--json"], c.io)).toBe(0);
+    expect(JSON.parse(c.stdout()).readyToPromote).toBe(true);
+  });
+
+  it("audits database evidence from JSON", async () => {
+    const c = capture();
+    expect(await runCli(["audit", "db", "tests/fixtures/providers/db.json", "--json"], c.io)).toBe(0);
+    expect(JSON.parse(c.stdout()).readyToMigrate).toBe(true);
   });
 
   it("reports unknown commands without guessing", async () => {
