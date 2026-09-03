@@ -1,123 +1,126 @@
 # GitSkillPro
 
-GitSkillPro is a universal software-workflow and repository-operations system for coding agents. It combines an Agent Skill, shared policy/decision engine, CLI, MCP server, plugin packaging, and capability-aware adapters for project/work-graph management, Git/GitHub, CI, hosting/deployment, infrastructure, database safety, repository automation, and context/token efficiency.
+GitSkillPro is a universal software-workflow and repository-operations system for coding agents. It combines an Agent Skill, shared policy/decision engine, CLI, MCP/plugin architecture, and capability-aware adapters for project/work-graph management, Git/SCM, CI, deployment, infrastructure, databases, repository automation, recovery, and context/token efficiency.
 
-The system is designed to work across local clones, linked worktrees, VPS/VM hosts, containers, CI runners, cloud coding agents, sandboxes, and plugin/connector-only environments without pretending capabilities exist when they do not.
+The core rule is simple: **use the safest capability that is actually proven, keep each system's truth separate, and require evidence for every material postcondition.**
 
-## Foundation status
+## Working implementation
 
-The `0.1.0` foundation is now a working **read / audit / plan** vertical slice. It includes truthful environment/capability discovery, risk and authority policy, provenance-safe evidence packets, a non-mutating local Git adapter, a Git safety audit, a portable Agent Skill, and the `gsp` CLI.
+The current stacked implementation contains two proven layers.
 
-Development commands:
+### Foundation
+
+- environment and capability discovery;
+- R0-R4 risk vocabulary and policy gates;
+- provenance-safe evidence packets;
+- read-only local Git inspection and Git safety audit;
+- publishable TypeScript package and `gsp` CLI;
+- deterministic, least-privilege GitHub Actions verification.
+
+### Workflow + work graphs
+
+- explicit authority maps across Linear, Beads, GitHub and other systems;
+- dynamic provider-status mapping;
+- Definition of Ready and Definition of Done checks;
+- workflow lifecycle gates;
+- host-provided Linear issue normalization without duplicate auth logic;
+- version/capability-aware Beads discovery and concurrency assessment;
+- material agent comments separated from code-review decisions;
+- independent-review requirements by risk tier;
+- capability-aware delegation planning;
+- guarded R1 local Git worktree creation that does not stash/reset/clean supervisor work;
+- work-graph duplicate/supersession/blocker audit;
+- greenfield workflow bootstrap planning;
+- workflow/Beads load-on-demand Agent Skill references.
+
+## Development
 
 ```bash
-npm ci
+npm ci --ignore-scripts
 npm run typecheck
 npm test
 npm run build
-node dist/cli/index.js --help
+npm pack --dry-run
 ```
 
-Working CLI surface:
+## CLI
 
 ```text
 gsp doctor [--json]
 gsp inspect [--json]
 gsp audit git [--json]
+gsp audit beads [--json]
+gsp bootstrap plan [--json]
+gsp delegate plan <issue-id> <title> [--json]
 gsp plan <intent> [--json]
 ```
 
-The foundation intentionally does **not** yet perform provider writes, Git mutations, worktree delegation execution, PR merges, deployments, database mutations, actual MCP transport, or production recovery actions. Those capabilities are layered on only after their safety/evidence adapters are implemented and tested.
+The CLI's workflow commands are read/audit/plan surfaces. Provider writes, Linear mutations, Beads claims, remote PR mutations, deploys, and database mutations remain separate permission- and policy-gated capabilities.
 
-## Canonical specification
+## Authority model
 
-The current canonical design is cumulative:
-
-- [`SPEC.md`](./SPEC.md) — core Git/repository/CI/deployment/database operating contract.
-- [`SPEC-v0.2.md`](./SPEC-v0.2.md) — workflow orchestration, Linear/issues/projects, agent comments/reviews, greenfield bootstrap, issue-to-PR flow, and repository governance.
-- [`SPEC-v0.3.md`](./SPEC-v0.3.md) — Beads/work-graph integration plus project takeover/recovery for broken CI, failed/stale/superseded PRs, tangled branches, conflicting tracker state, and selective salvage.
-- [`SPEC-v0.4.md`](./SPEC-v0.4.md) — Context7 integration and the Context Economy Engine: progressive retrieval, context packets, caching, compaction, token/model budgets, prompt-cache awareness, and measurable cost reduction without weakening safety.
-- [`SPEC-v0.5.md`](./SPEC-v0.5.md) — auto-commit/repository automation actors, hooks/watchers/bots, separate auto-stage/commit/push/PR/merge/deploy authority, concurrency, idempotency, and loop prevention.
-- [`SPEC-v0.6.md`](./SPEC-v0.6.md) — frontier capabilities: change graphs, native stacked PRs, merge groups, semantic conflicts, Jujutsu/alternative VCS adapters, current MCP/A2A agent protocols, reproducible environments, DAG/affected CI, policy-as-code, supply-chain attestations, deterministic codemods, progressive delivery, preview database stacks, release intent, telemetry, and proof-carrying change manifests.
-
-The newest specification wins where requirements conflict. Older design notes under `docs/superpowers/specs/` are supporting design history.
-
-## End-to-end operating model
+GitSkillPro does not assume one tracker owns every form of truth. A common layered configuration is:
 
 ```text
-PROJECT / INITIATIVE
-  -> ISSUE / EXECUTION GRAPH
-  -> READY CHECK
-  -> CLAIM / DELEGATE
-  -> CONTEXT PLAN + MINIMUM SUFFICIENT PACKET
-  -> CHANGE / STACK PLAN
-  -> BRANCH + WORKTREE OR PROVIDER-NATIVE ISOLATION
-  -> IMPLEMENT / DETERMINISTIC TRANSFORM + LOCAL VERIFY
-  -> PR / CHANGE STACK
-  -> INDEPENDENT AGENT REVIEW
-  -> CI / AFFECTED GRAPH / POLICY / SECURITY CHECKS
-  -> MERGE GROUP / MERGE QUEUE WHEN USED
-  -> MERGE
-  -> BUILD + PROVENANCE / SBOM WHEN REQUIRED
-  -> DATABASE / DEPLOYMENT
-  -> DEPLOYMENT VERIFY
-  -> RELEASE / FLAG / PROGRESSIVE EXPOSURE WHEN USED
-  -> PRODUCTION VERIFY
-  -> ISSUE COMPLETE
-  -> PROJECT / MILESTONE UPDATE
+Linear
+  canonical: project outcome, human-visible issue intent, milestones
+
+Beads
+  canonical: executable dependency graph, blockers, claims, discovered work
+
+GitHub
+  canonical: branches, commits, PRs, reviews, checks, merge state
+
+CI / Deployment / Database providers
+  canonical: their own execution and runtime evidence
 ```
 
-Each layer keeps its own truth. A project may use Linear as the human/product tracker, Beads as the dependency-aware agent execution graph, GitHub as the code/review/merge system, Context7 for version-specific external library documentation, provider-native stacks/merge queues for integration, and deployment/database adapters for runtime evidence. GitSkillPro resolves explicit authority and freshness rather than dumping all sources into every model call.
+Mirrors are links/projections unless explicitly configured as canonical. Similar names alone never establish cross-system identity.
+
+## Delegation model
+
+When a persistent local Git worktree capability is proven **and** the active work-graph backend is safe for concurrent writers:
+
+```text
+one task -> one branch -> one worktree -> one agent -> one evidence packet
+```
+
+Otherwise GitSkillPro plans remote branch/session isolation and records the limitation. Multiple Git worktrees do not make an embedded, single-writer, or unknown Beads store safe for simultaneous writers.
+
+## Review model
+
+A comment is not a code review. A code review is not automatically merge authorization. Merge recommendation, merge authorization, and merge execution remain distinct.
+
+R3/R4 work requires an independent reviewer; the implementing agent cannot satisfy that gate by approving its own change.
+
+## Greenfield mode
+
+A new project is bootstrapped in this order: repository baseline and instructions, tracker authority, issue conventions, branch/worktree isolation, trusted CI baseline, PR/review policy, repository-rule audit, deployment/database discovery, Definition of Ready/Done, context policy, then one representative proving issue through the full declared lifecycle.
+
+GitSkillPro does not invent licenses, maintainers, security contacts, credentials, deployment accounts, or database ownership.
+
+## Canonical specifications
+
+The design is cumulative; newer specifications win where they conflict:
+
+- [`SPEC.md`](./SPEC.md) — core Git/CI/deployment/database contract.
+- [`SPEC-v0.2.md`](./SPEC-v0.2.md) — Linear/issues/projects, agent comments/reviews, greenfield bootstrap, issue-to-PR workflow, repository governance.
+- [`SPEC-v0.3.md`](./SPEC-v0.3.md) — Beads/work graphs and takeover/recovery archaeology.
+- [`SPEC-v0.4.md`](./SPEC-v0.4.md) — Context7 and Context Economy Engine.
+- [`SPEC-v0.5.md`](./SPEC-v0.5.md) — auto-commit/repository automation actors and separate automation authorities.
+- [`SPEC-v0.6.md`](./SPEC-v0.6.md) — change graphs, stacked PRs, merge groups, alternative VCS, MCP/A2A, reproducible environments, policy-as-code, supply-chain provenance, progressive delivery, preview databases, deterministic codemods and proof-carrying change manifests.
 
 ## Operating modes
 
-GitSkillPro supports four distinct modes:
+- **Normal** — healthy issue-to-production execution.
+- **Greenfield bootstrap** — establish a reliable delivery system before feature work.
+- **Takeover / recovery** — reconstruct and repair inherited messy repositories before broad mutation.
+- **Incident** — prioritize service restoration and evidence preservation under incident policy.
 
-- **Normal mode** — execute healthy issue-to-production workflows.
-- **Greenfield bootstrap mode** — establish tracker, repo, reproducible dev environment, CI, PR/stack, review, rules, deployment, database, supply-chain, and context-economy flow for a new project.
-- **Takeover / recovery mode** — reconstruct and repair inherited messy projects before broad mutation.
-- **Incident mode** — prioritize service restoration and evidence preservation under incident policy.
+## Next stack layers
 
-Recovery mode inventories and links issues/beads, branches/changes, commits, PRs/stacks, reviews, CI/merge groups, merges, deployments, releases, and migrations; distinguishes default-branch CI breakage from PR-specific failures; identifies duplicates and supersession; salvages only proven useful work; reconciles tracker state; restores governance; and proves recovery with one clean end-to-end issue.
-
-## Work-management and change surface
-
-Linear is first-class for project/issue management. Beads (`bd`) is first-class as a dependency-aware work-graph/execution adapter. GitHub Issues/Projects are a first-class fallback or companion. Other trackers fit the same capability contracts.
-
-GitSkillPro also models a logical **Change Graph** above physical commit SHAs so rebases, stacked PRs, Jujutsu-style stable change IDs, supersession, salvage, and multiple physical versions of the same intended change can be reasoned about without losing Git object identity.
-
-## Context and token economy
-
-Context7 is first-class for current, version-specific external library/framework/API documentation. GitSkillPro uses focused queries, exact library IDs when known, version evidence from the repo, response caching, and privacy-safe query formulation.
-
-The broader Context Economy Engine follows one rule: **minimum sufficient context for a correct, evidence-backed decision**. It uses progressive disclosure, content-addressed caches, diff/delta retrieval, bounded subagent packets, structured checkpoints, lean load-on-demand instructions, risk-aware model routing, provider prompt/context caching, and explicit token/cost metrics.
-
-Context savings never override safety, current-state evidence, acceptance criteria, recovery requirements, or high-risk review.
-
-## Frontier capabilities
-
-GitSkillPro uses maturity tiers rather than forcing new technology into every repository. Frontier capabilities include GitHub native stacked PRs and merge queues, Jujutsu/alternative workspace adapters, stateless MCP with durable tasks, A2A remote-agent tasks/artifacts, Dev Containers/Nix/Dagger/Bazel-style reproducible execution, affected-task graphs and remote cache, OPA-style policy-as-code, GitHub/SLSA/Sigstore provenance, SPDX/CycloneDX SBOM evidence, deterministic semantic refactoring engines, feature-flag/progressive delivery, preview application/database stacks, expand-contract database changes, software catalogs/golden paths, OpenTelemetry delivery traces, and proof-carrying Change Manifests.
-
-## Provider surface
-
-GitSkillPro's provider layer is intentionally broader than Vercel. The design includes Vercel, Cloudflare, Hostinger VPS, generic VPS/SSH, Docker/Compose, Kubernetes, Netlify, Railway, Render, Fly.io, and extensible AWS/GCP/Azure adapters.
-
-Database safety is a separate first-class gate. Planned database/provider knowledge includes PostgreSQL, Supabase, Neon, MySQL/MariaDB, PlanetScale/Vitess, SQLite/libSQL, Turso, Cloudflare D1, MongoDB Atlas, Redis/Upstash, Convex, Firebase/Firestore, and DynamoDB, plus migration-framework detection for Prisma, Drizzle, Supabase CLI, Alembic, Django, Rails, Knex, TypeORM, Sequelize, Flyway, Liquibase, EF Core, Atlas, D1/Wrangler, raw SQL, and custom runners.
-
-## Core operation lifecycle
-
-```text
-DISCOVER -> SNAPSHOT -> CLASSIFY RISK -> PLAN -> CHECK AUTHORITY
-         -> PLAN CONTEXT -> REVALIDATE CONCURRENCY -> EXECUTE -> VERIFY
-         -> EMIT EVIDENCE / CHANGE MANIFEST -> CHECKPOINT/CACHE
-         -> COMPLETE / RECOVER / ESCALATE
-```
-
-## Roadmap after the foundation
-
-1. **Workflow + work graphs** — Linear, Beads, issue-to-branch/worktree-to-PR lifecycle, agent comments/reviews, greenfield bootstrap.
-2. **Recovery** — project archaeology, default-branch CI baseline diagnosis, PR classification/salvage, tracker reconciliation.
-3. **Providers + databases** — GitHub remote adapter, Vercel, Cloudflare, Hostinger, Supabase and database safety adapters.
-4. **Context economy** — Context7, progressive retrieval, cache/checkpoints, token/cost telemetry.
-5. **Automation + frontier** — auto-commit actors, Change Graph/stacked PRs, merge groups, policy-as-code, provenance/SBOM, progressive delivery, preview databases, deterministic codemods and agent protocols.
-6. **MCP + plugin packaging** — actual MCP transport and OpenAI-compatible plugin packaging over the proven core.
+1. **Recovery** — project evidence graph, default-branch CI baseline diagnosis, failed/stale/superseded PR classification, selective salvage and tracker reconciliation.
+2. **Providers + databases** — GitHub remote operations, Vercel, Cloudflare, Hostinger, Supabase/database adapters and deployment/migration gates.
+3. **Context economy** — Context7, progressive retrieval, content-addressed cache/checkpoints and token/cost telemetry.
+4. **Automation + frontier** — auto-commit actors, Change Graph/stacked PRs, merge groups, provenance/SBOM, policy-as-code, progressive release and preview databases.
+5. **MCP + plugin packaging** — actual MCP transport and OpenAI-compatible plugin packaging over the proven core.
