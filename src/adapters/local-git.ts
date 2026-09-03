@@ -82,10 +82,15 @@ function parseRemotes(output: string): RemoteSnapshot[] {
   for (const line of output.split(/\r?\n/)) {
     const match = line.match(/^([^\s]+)\s+(.+)\s+\((fetch|push)\)$/);
     if (!match) continue;
-    const [, name, url, mode] = match;
-    const current = byName.get(name) ?? { name };
+
+    const name = match[1];
+    const url = match[2];
+    const mode = match[3];
+    if (!name || !url || (mode !== "fetch" && mode !== "push")) continue;
+
+    const current: RemoteSnapshot = byName.get(name) ?? { name };
     if (mode === "fetch") current.fetchUrl = url;
-    if (mode === "push") current.pushUrl = url;
+    else current.pushUrl = url;
     byName.set(name, current);
   }
   return [...byName.values()].sort((a, b) => a.name.localeCompare(b.name));
