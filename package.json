@@ -1,0 +1,33 @@
+{
+  "name": "gitskillpro",
+  "version": "0.1.0",
+  "description": "Universal software-workflow and repository-operations system for coding agents.",
+  "type": "module",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/skysthelimitpainting1779-collab/gitskillpro.git"
+  },
+  "homepage": "https://github.com/skysthelimitpainting1779-collab/gitskillpro#readme",
+  "engines": { "node": ">=22" },
+  "bin": { "gsp": "dist/cli/index.js" },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/",
+    "skills/"
+  ],
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "build": "tsc -p tsconfig.json",
+    "gsp": "tsx src/cli/index.ts",
+    "prepack": "npm run build"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.21",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
+  }
+}
