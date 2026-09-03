@@ -1,0 +1,16 @@
+{
+  "expectedSourceRevision": "abc123",
+  "deployment": {
+    "provider": "vercel",
+    "domain": "deployment",
+    "evidenceStatus": "partial",
+    "status": "success",
+    "healthy": true,
+    "deploymentId": "dpl_1",
+    "sourceRevision": "abc123",
+    "targetEnvironment": "production",
+    "runtimeEvidence": "proven",
+    "buildEvidence": "proven",
+    "rollbackEvidence": "unknown"
+  }
+}
