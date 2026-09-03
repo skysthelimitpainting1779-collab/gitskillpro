@@ -7,6 +7,8 @@ const required = [
   ".github/workflows/ci.yml",
   "AGENTS.md",
   "skills/git-skill-pro/SKILL.md",
+  "skills/git-skill-pro/references/primitive-safety.md",
+  "skills/git-skill-pro/references/environment.md",
 ];
 
 describe("repository contract", () => {
@@ -14,9 +16,17 @@ describe("repository contract", () => {
     for (const path of required) expect(existsSync(path), path).toBe(true);
   });
 
-  it("keeps the Agent Skill discoverable", () => {
+  it("keeps the Agent Skill discoverable and safety-focused", () => {
     const skill = readFileSync("skills/git-skill-pro/SKILL.md", "utf8");
     expect(skill).toMatch(/^---[\s\S]*name:\s*git-skill-pro/m);
     expect(skill).toMatch(/description:\s*Use when/i);
+    expect(skill).toMatch(/discover.*capabilit/is);
+    expect(skill).toMatch(/assume.*concurr/is);
+    expect(skill).toMatch(/code correctness/is);
+    expect(skill).toMatch(/CI health/is);
+    expect(skill).toMatch(/deployment health/is);
+    expect(skill).toMatch(/database state/is);
+    expect(skill).toMatch(/minimum sufficient context/i);
+    expect(skill).toMatch(/never claim persistence/i);
   });
 });
