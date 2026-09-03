@@ -1,0 +1,19 @@
+{
+  "changeId": "chg-upper",
+  "versionId": "v2",
+  "headSha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "baseSha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "workItemIds": ["ENG-42"],
+  "dependencies": [
+    { "changeId": "chg-base", "headSha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" }
+  ],
+  "affectedRefs": ["affected:graph:1"],
+  "diffRefs": ["github:pr:42:patch"],
+  "risk": "R3",
+  "checkRefs": ["ci:100"],
+  "securityRefs": ["codeql:7"],
+  "independentReviewRefs": ["review:agent-2"],
+  "recoveryRefs": ["git:revert-plan"],
+  "contextPacketHash": "ctx-42",
+  "unknowns": []
+}

@@ -1,0 +1,22 @@
+{
+  "layers": [
+    {
+      "changeId": "chg-base",
+      "prNumber": 41,
+      "headSha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "dependencyHeads": {}
+    },
+    {
+      "changeId": "chg-upper",
+      "prNumber": 42,
+      "headSha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "dependencyHeads": {
+        "chg-base": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    }
+  ],
+  "currentHeads": {
+    "chg-base": "cccccccccccccccccccccccccccccccccccccccc",
+    "chg-upper": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  }
+}

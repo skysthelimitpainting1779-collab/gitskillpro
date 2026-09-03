@@ -24,15 +24,16 @@ Use the **minimum sufficient context for a correct, evidence-backed decision**. 
 7. Decide whether the project is healthy normal work, greenfield bootstrap, takeover/recovery, or incident mode. For broken CI, stale/failed/superseded PRs, tangled branches, tracker drift or unclear production truth, load `references/recovery.md` and perform archaeology/inventory before cleanup.
 8. For CI/workflow failures load `references/ci.md`; for deployment/provider work load `references/deployment.md`; for schemas/migrations/data-state work load `references/databases.md`.
 9. For large repositories, logs, PR histories, docs retrieval, recovery archaeology, or multi-agent handoffs load `references/context-economy.md` and use **progressive retrieval** instead of broad context dumps.
-10. Snapshot only the state needed for the current decision.
-11. Classify risk before mutation; use `references/primitive-safety.md` for foundation Git primitives.
-12. Assume concurrency and revalidate state immediately before material operations.
-13. Demand evidence from the layer that can actually prove the claimed postcondition.
+10. When the project uses stacked PRs, merge queues/groups, stable change IDs/Jujutsu, attestations/SBOMs, policy-as-code, or progressive delivery, load `references/frontier.md` and keep logical Change identity separate from physical commit identity.
+11. Snapshot only the state needed for the current decision.
+12. Classify risk before mutation; use `references/primitive-safety.md` for foundation Git primitives.
+13. Assume concurrency and revalidate state immediately before material operations.
+14. Demand evidence from the layer that can actually prove the claimed postcondition.
 
 ## Non-negotiable behavior
 
 - Never discard, reset, clean, overwrite, stash, or commit unexplained work.
-- Separate **code correctness**, **CI health**, **merge safety**, **deployment health**, **database state**, and **production health**. A green check in one layer is not proof for another layer.
+- Separate **code correctness**, **CI health**, **merge safety**, **deployment health**, **database state**, **release/exposure state**, and **production health**. A green check in one layer is not proof for another layer.
 - Keep observation, inference, recommendation, attempted mutation, verification, and proven persistence distinct.
 - Prefer reversible operations and isolated branches/worktrees.
 - Treat work trackers, Git/SCM, CI, deployment providers, databases, and repository automation as separate authorities/actors linked by evidence.
@@ -59,6 +60,24 @@ Hooks are part of the repository environment. A rejecting hook is a failure to d
 Perform **loop prevention** analysis before enabling recursive writers. Detect self-trigger or multi-actor cycles such as `push → CI → generate → commit → push`. Use provenance/event/path guards, dedicated branches, concurrency control, no-op checks, and **idempotency**. For generators, repeated execution with the same input identity should converge to the same semantic/content output hash; repeated new diffs are defects unless intentionally designed and separately authorized.
 
 Background direct pushes to the default/protected branch and background force-push are denied by default. Push, PR, review, merge and deploy each require a fresh expected-state/policy gate.
+
+## Frontier change system
+
+A **logical Change** is an intended unit of work; a commit SHA is one physical version of that logical Change. Keep logical Change identity separate from physical commit SHA identity so a rebase, amend, restack, salvage, or Jujutsu-style stable change ID does not erase the relationship to the same intended work. Git remains canonical physical repository history.
+
+For stacked changes/PRs, upper layers are valid only against the exact validated heads of lower dependencies. A lower-layer rebase or replacement makes dependent upper evidence stale even when the upper PR head itself has not moved.
+
+**Merge-group evidence is not PR-head evidence.** When a merge queue/group is required, obtain the exact merge-group SHA and require the configured checks on that SHA. Successful checks on a PR head cannot be reused as proof that the merge-group composition is safe.
+
+For material autonomous changes, emit a **Proof-Carrying Change Manifest** rather than forcing each reviewer to reconstruct the entire project history. The Change Manifest references work identity, logical Change/version, head/base, dependency heads, affected/diff evidence, risk, CI/security evidence, migration/deployment/release identities, provenance/SBOM, independent reviews, recovery evidence, context packet identity, and explicit unknowns. Evidence stays at its source; the manifest carries references and identities.
+
+Manifest proof is conditional. Head/base drift, a changed lower dependency, migration/deployment identity change, or context-packet change makes affected proof stale and requires revalidation.
+
+Keep **source verification, artifact provenance/attestation, SBOM/signature, policy evaluation, deployment health, and release state separate**. One does not prove the others. Policy-as-code evidence should identify the policy/version, evaluated input hash, result, reasons, and source reference.
+
+**Deployment is not release.** A revision can be healthy in production while a feature flag or progressive rollout exposes it to only 0%, 10%, or 50% of users. Model `deploy → verify → expose/promote → observe → promote/complete/pause/rollback`; do not mark release complete until its target exposure and release-specific health evidence are satisfied.
+
+For **Jujutsu or another alternative VCS**, normalize stable change identity separately from the physical Git-compatible commit. A VCS that permits conflicts to persist as state does not mean the conflict is resolved; conflicted or unknown conflict state is not safe-to-integrate proof.
 
 ## Context Economy
 
@@ -98,7 +117,7 @@ For takeover/recovery work, establish the **default-branch CI baseline before bl
 
 Anchor checks/reviews to the current PR head SHA. Revalidate head/base, required checks, unresolved review threads, risk-gated independent review, deployment/database implications and rollback/forward-fix plan immediately before merge recommendation.
 
-Green CI alone is not sufficient for R3 merge readiness.
+Green CI alone is not sufficient for R3 merge readiness. For stacked/queued workflows, also revalidate stack dependencies and merge-group SHA evidence.
 
 ## Deployment/provider gate
 
@@ -123,7 +142,7 @@ For material migrations prove target environment, current migration version, pen
 When a project is already tangled, perform archaeology before cleanup:
 
 1. inventory trackers/work graphs, branches/worktrees, PRs/reviews, CI/rules, deployments, migrations, and repository automation/background writers;
-2. build an evidence graph across issue/bead → branch → commits → PR → review → CI → merge → deployment/database state;
+2. build an evidence graph across issue/bead → logical Change/version → branch → commits → PR/stack → review → CI/merge-group → merge → deployment/release/database state;
 3. classify current, stale, duplicate, superseded, abandoned, orphaned, conflicted, baseline-failed, PR-specific-failed and unknown artifacts without using title/timestamp shortcuts;
 4. preserve explicit duplicate/supersession relationships;
 5. use **selective salvage**—fresh branches with selected cherry-picks/patches or current-spec reimplementation—rather than merging stale branches wholesale;
@@ -142,6 +161,6 @@ Never claim persistence merely because an attempted command or provider call ret
 
 ## Implemented surface
 
-The current implementation includes environment/capability discovery, risk/policy/evidence contracts, read-only local Git inspection/audit, work-authority mapping, Linear/Beads workflow normalization, guarded worktree delegation, work-graph audit, greenfield planning, recovery archaeology/planning, provider detection, CI/PR/deployment/database audits, Context Economy/Context7 planning, repository-automation authority/discovery/audit, loop/idempotency analysis, and **guarded local checkpoint commits** in proven isolated worktrees with hooks honored and no remote push.
+The current implementation includes environment/capability discovery, risk/policy/evidence contracts, Git/worktree/workflow/recovery/provider/database/Context Economy/repository-automation layers, guarded local checkpoint commits, **logical Change Graphs, stack/merge-group auditing, Proof-Carrying Change Manifests with freshness invalidation, provenance/SBOM/policy evidence models, deploy-vs-release planning, and Git/Jujutsu-style change identity normalization**.
 
-Remote automation writes (`auto-push`, `auto-pr`, `auto-review`, `auto-merge`, `auto-deploy`), Linear/Beads mutations, recovery cleanup mutations, deployment/database mutation, direct Context7 network transport, real MCP transport, and frontier execution features remain separately gated until their implementation layers are proven.
+Remote automation writes (`auto-push`, `auto-pr`, `auto-review`, `auto-merge`, `auto-deploy`), provider/production mutations, direct Context7 network transport, real MCP transport, and actual alternative-VCS mutation execution remain separately gated until their implementation layers are proven.

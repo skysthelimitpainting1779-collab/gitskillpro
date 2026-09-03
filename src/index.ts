@@ -1,4 +1,4 @@
-export const GITSKILLPRO_VERSION = "0.6.0-automation";
+export const GITSKILLPRO_VERSION = "0.7.0-frontier";
 
 export * from "./core/types.js";
 export * from "./core/operation.js";
@@ -22,6 +22,14 @@ export * from "./automation/loops.js";
 export * from "./automation/idempotency.js";
 export * from "./automation/checkpoint.js";
 
+export * from "./change/types.js";
+export * from "./change/graph.js";
+export * from "./change/stack.js";
+export * from "./change/manifest.js";
+export * from "./change/provenance.js";
+export * from "./change/policy.js";
+export * from "./release/plan.js";
+
 export * from "./work/types.js";
 export * from "./work/authority.js";
 export * from "./work/status.js";
@@ -42,6 +50,7 @@ export * from "./adapters/cloudflare.js";
 export * from "./adapters/hostinger.js";
 export * from "./adapters/database.js";
 export * from "./adapters/context7.js";
+export * from "./adapters/change-vcs.js";
 
 export * from "./delegation/planner.js";
 export * from "./delegation/worktree.js";
@@ -53,6 +62,7 @@ export * from "./audits/pr.js";
 export * from "./audits/deployment.js";
 export * from "./audits/database.js";
 export * from "./audits/automation.js";
+export * from "./audits/merge-group.js";
 
 export * from "./database/detect.js";
 export * from "./database/sql-risk.js";

@@ -1,0 +1,8 @@
+{
+  "deploymentHealthy": true,
+  "deploymentRevision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "currentExposurePercent": 10,
+  "targetExposurePercent": 50,
+  "featureFlagId": "new-checkout",
+  "metricsHealthy": true
+}

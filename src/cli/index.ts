@@ -17,8 +17,11 @@ import { auditCi, type CiAuditInput } from "../audits/ci.js";
 import { auditDatabase, type DatabaseAuditInput } from "../audits/database.js";
 import { auditDeployment, type DeploymentAuditInput } from "../audits/deployment.js";
 import { auditGit } from "../audits/git.js";
+import { auditMergeGroup, type MergeGroupAuditInput } from "../audits/merge-group.js";
 import { auditPullRequest, type PullRequestAuditInput } from "../audits/pr.js";
 import { planGreenfieldBootstrap } from "../bootstrap/greenfield.js";
+import { createChangeManifest, validateChangeManifest, type ChangeManifestInput } from "../change/manifest.js";
+import { auditChangeStack, type ChangeStackAuditInput } from "../change/stack.js";
 import { createCheckpoint, type ContextCheckpointInput } from "../context/checkpoint.js";
 import { reportContextCost, type ContextCostInput } from "../context/cost.js";
 import { planContext } from "../context/planner.js";
@@ -29,6 +32,7 @@ import { planDelegation } from "../delegation/planner.js";
 import { detectRepositoryProviders } from "../providers/detect.js";
 import { diagnoseCiBaseline, type CiRunEvidence } from "../recovery/ci-baseline.js";
 import { planProjectRecovery, type ProjectRecoveryInput } from "../recovery/planner.js";
+import { planRelease, type ReleasePlanInput } from "../release/plan.js";
 
 interface AutomationPlanSnapshot {
   actor: AutomationActor;
@@ -36,7 +40,7 @@ interface AutomationPlanSnapshot {
   scope?: AutomationScope;
 }
 
-export const HELP = `GitSkillPro (gsp)\n\nUsage:\n  gsp doctor [--json]\n  gsp inspect [--json]\n  gsp detect providers [--json]\n  gsp audit git [--json]\n  gsp audit beads [--json]\n  gsp audit ci <snapshot.json> [--json]\n  gsp audit pr <snapshot.json> [--json]\n  gsp audit deploy <snapshot.json> [--json]\n  gsp audit db <snapshot.json> [--json]\n  gsp automation discover [--json]\n  gsp automation audit <snapshot.json> [--json]\n  gsp automation plan <snapshot.json> [--json]\n  gsp automation detect-loops <snapshot.json> [--json]\n  gsp automation verify-idempotency <snapshot.json> [--json]\n  gsp bootstrap plan [--json]\n  gsp delegate plan <issue-id> <title> [--json]\n  gsp recover project <snapshot.json> [--json]\n  gsp recover ci <snapshot.json> [--json]\n  gsp context plan <snapshot.json> [--json]\n  gsp context checkpoint <snapshot.json> [--json]\n  gsp docs plan <snapshot.json> [--json]\n  gsp cost report <snapshot.json> [--json]\n  gsp plan <intent> [--json]\n`;
+export const HELP = `GitSkillPro (gsp)\n\nUsage:\n  gsp doctor [--json]\n  gsp inspect [--json]\n  gsp detect providers [--json]\n  gsp audit git [--json]\n  gsp audit beads [--json]\n  gsp audit ci <snapshot.json> [--json]\n  gsp audit pr <snapshot.json> [--json]\n  gsp audit deploy <snapshot.json> [--json]\n  gsp audit db <snapshot.json> [--json]\n  gsp automation discover [--json]\n  gsp automation audit <snapshot.json> [--json]\n  gsp automation plan <snapshot.json> [--json]\n  gsp automation detect-loops <snapshot.json> [--json]\n  gsp automation verify-idempotency <snapshot.json> [--json]\n  gsp change manifest <snapshot.json> [--json]\n  gsp change audit-stack <snapshot.json> [--json]\n  gsp merge-group audit <snapshot.json> [--json]\n  gsp release plan <snapshot.json> [--json]\n  gsp bootstrap plan [--json]\n  gsp delegate plan <issue-id> <title> [--json]\n  gsp recover project <snapshot.json> [--json]\n  gsp recover ci <snapshot.json> [--json]\n  gsp context plan <snapshot.json> [--json]\n  gsp context checkpoint <snapshot.json> [--json]\n  gsp docs plan <snapshot.json> [--json]\n  gsp cost report <snapshot.json> [--json]\n  gsp plan <intent> [--json]\n`;
 
 export interface CliIO {
   cwd: string;
@@ -144,6 +148,15 @@ export async function runCli(argv: string[] = process.argv.slice(2), io: CliIO =
     }
     if (command === "automation" && subcommand === "detect-loops") { write(io, analyzeAutomationLoops(await auditSnapshotPath<AutomationLoopInput>(io.cwd, rest[0], "gsp automation detect-loops")), asJson); return 0; }
     if (command === "automation" && subcommand === "verify-idempotency") { write(io, verifyIdempotency(await auditSnapshotPath<IdempotencyInput>(io.cwd, rest[0], "gsp automation verify-idempotency")), asJson); return 0; }
+
+    if (command === "change" && subcommand === "manifest") {
+      const manifest = createChangeManifest(await auditSnapshotPath<ChangeManifestInput>(io.cwd, rest[0], "gsp change manifest"));
+      write(io, { manifest, validation: validateChangeManifest(manifest) }, asJson);
+      return 0;
+    }
+    if (command === "change" && subcommand === "audit-stack") { write(io, auditChangeStack(await auditSnapshotPath<ChangeStackAuditInput>(io.cwd, rest[0], "gsp change audit-stack")), asJson); return 0; }
+    if (command === "merge-group" && subcommand === "audit") { write(io, auditMergeGroup(await auditSnapshotPath<MergeGroupAuditInput>(io.cwd, rest[0], "gsp merge-group audit")), asJson); return 0; }
+    if (command === "release" && subcommand === "plan") { write(io, planRelease(await auditSnapshotPath<ReleasePlanInput>(io.cwd, rest[0], "gsp release plan")), asJson); return 0; }
 
     if (command === "bootstrap" && subcommand === "plan") { write(io, planGreenfieldBootstrap({ repositoryExists: existsSync(resolve(io.cwd, ".git")) }), asJson); return 0; }
 

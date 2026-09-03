@@ -35,6 +35,10 @@ jobs:
       - run: node dist/cli/index.js automation plan tests/fixtures/automation/plan.json --json
       - run: node dist/cli/index.js automation detect-loops tests/fixtures/automation/loops.json --json
       - run: node dist/cli/index.js automation verify-idempotency tests/fixtures/automation/idempotency.json --json
+      - run: node dist/cli/index.js change manifest tests/fixtures/frontier/manifest.json --json
+      - run: node dist/cli/index.js change audit-stack tests/fixtures/frontier/stack.json --json
+      - run: node dist/cli/index.js merge-group audit tests/fixtures/frontier/merge-group.json --json
+      - run: node dist/cli/index.js release plan tests/fixtures/frontier/release.json --json
       - run: node dist/cli/index.js bootstrap plan --json
       - run: node dist/cli/index.js delegate plan ENG-42 "Add work graph" --json
       - run: node dist/cli/index.js recover project tests/fixtures/recovery/messy-project.json --json
