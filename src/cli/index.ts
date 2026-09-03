@@ -5,6 +5,7 @@ import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { discoverBeads } from "../adapters/beads.js";
+import { planContext7Request, type Context7PlanInput } from "../adapters/context7.js";
 import { LocalGitAdapter } from "../adapters/local-git.js";
 import { auditCi, type CiAuditInput } from "../audits/ci.js";
 import { auditDatabase, type DatabaseAuditInput } from "../audits/database.js";
@@ -12,6 +13,10 @@ import { auditDeployment, type DeploymentAuditInput } from "../audits/deployment
 import { auditGit } from "../audits/git.js";
 import { auditPullRequest, type PullRequestAuditInput } from "../audits/pr.js";
 import { planGreenfieldBootstrap } from "../bootstrap/greenfield.js";
+import { createCheckpoint, type ContextCheckpointInput } from "../context/checkpoint.js";
+import { reportContextCost, type ContextCostInput } from "../context/cost.js";
+import { planContext } from "../context/planner.js";
+import type { ContextPlanInput } from "../context/types.js";
 import { inspectCurrentEnvironment } from "../core/environment.js";
 import { planIntent } from "../core/operation.js";
 import { planDelegation } from "../delegation/planner.js";
@@ -19,7 +24,7 @@ import { detectRepositoryProviders } from "../providers/detect.js";
 import { diagnoseCiBaseline, type CiRunEvidence } from "../recovery/ci-baseline.js";
 import { planProjectRecovery, type ProjectRecoveryInput } from "../recovery/planner.js";
 
-export const HELP = `GitSkillPro (gsp)\n\nUsage:\n  gsp doctor [--json]\n  gsp inspect [--json]\n  gsp detect providers [--json]\n  gsp audit git [--json]\n  gsp audit beads [--json]\n  gsp audit ci <snapshot.json> [--json]\n  gsp audit pr <snapshot.json> [--json]\n  gsp audit deploy <snapshot.json> [--json]\n  gsp audit db <snapshot.json> [--json]\n  gsp bootstrap plan [--json]\n  gsp delegate plan <issue-id> <title> [--json]\n  gsp recover project <snapshot.json> [--json]\n  gsp recover ci <snapshot.json> [--json]\n  gsp plan <intent> [--json]\n`;
+export const HELP = `GitSkillPro (gsp)\n\nUsage:\n  gsp doctor [--json]\n  gsp inspect [--json]\n  gsp detect providers [--json]\n  gsp audit git [--json]\n  gsp audit beads [--json]\n  gsp audit ci <snapshot.json> [--json]\n  gsp audit pr <snapshot.json> [--json]\n  gsp audit deploy <snapshot.json> [--json]\n  gsp audit db <snapshot.json> [--json]\n  gsp bootstrap plan [--json]\n  gsp delegate plan <issue-id> <title> [--json]\n  gsp recover project <snapshot.json> [--json]\n  gsp recover ci <snapshot.json> [--json]\n  gsp context plan <snapshot.json> [--json]\n  gsp context checkpoint <snapshot.json> [--json]\n  gsp docs plan <snapshot.json> [--json]\n  gsp cost report <snapshot.json> [--json]\n  gsp plan <intent> [--json]\n`;
 
 export interface CliIO {
   cwd: string;
@@ -175,8 +180,7 @@ export async function runCli(argv: string[] = process.argv.slice(2), io: CliIO =
     }
 
     if (command === "bootstrap" && subcommand === "plan") {
-      const plan = planGreenfieldBootstrap({ repositoryExists: existsSync(resolve(io.cwd, ".git")) });
-      write(io, plan, asJson);
+      write(io, planGreenfieldBootstrap({ repositoryExists: existsSync(resolve(io.cwd, ".git")) }), asJson);
       return 0;
     }
 
@@ -205,6 +209,30 @@ export async function runCli(argv: string[] = process.argv.slice(2), io: CliIO =
       } else {
         write(io, diagnoseCiBaseline(recoveryCiRuns(snapshot)), asJson);
       }
+      return 0;
+    }
+
+    if (command === "context" && subcommand === "plan") {
+      const input = await auditSnapshotPath<ContextPlanInput>(io.cwd, rest[0], "gsp context plan");
+      write(io, planContext(input), asJson);
+      return 0;
+    }
+
+    if (command === "context" && subcommand === "checkpoint") {
+      const input = await auditSnapshotPath<ContextCheckpointInput>(io.cwd, rest[0], "gsp context checkpoint");
+      write(io, createCheckpoint(input), asJson);
+      return 0;
+    }
+
+    if (command === "docs" && subcommand === "plan") {
+      const input = await auditSnapshotPath<Context7PlanInput>(io.cwd, rest[0], "gsp docs plan");
+      write(io, planContext7Request(input), asJson);
+      return 0;
+    }
+
+    if (command === "cost" && subcommand === "report") {
+      const input = await auditSnapshotPath<ContextCostInput>(io.cwd, rest[0], "gsp cost report");
+      write(io, reportContextCost(input), asJson);
       return 0;
     }
 
