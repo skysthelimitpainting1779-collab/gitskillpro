@@ -21,10 +21,11 @@ Use the **minimum sufficient context for a correct, evidence-backed decision**. 
 4. Resolve the tracker/work-graph **authority map** before mixing Linear, Beads, GitHub Issues/Projects, or another tracker. Load `references/workflow.md` for work-management tasks.
 5. If Beads is present, feature-detect its installed version/capabilities and storage/concurrency mode; load `references/beads.md`.
 6. Decide whether the project is healthy normal work, greenfield bootstrap, takeover/recovery, or incident mode. For broken CI, stale/failed/superseded PRs, tangled branches, tracker drift or unclear production truth, load `references/recovery.md` and perform archaeology/inventory before cleanup.
-7. Snapshot only the state needed for the current decision.
-8. Classify risk before mutation; use `references/primitive-safety.md` for foundation Git primitives.
-9. Assume concurrency and revalidate state immediately before material operations.
-10. Demand evidence from the layer that can actually prove the claimed postcondition.
+7. For CI/workflow failures load `references/ci.md`; for deployment/provider work load `references/deployment.md`; for schemas/migrations/data-state work load `references/databases.md`.
+8. Snapshot only the state needed for the current decision.
+9. Classify risk before mutation; use `references/primitive-safety.md` for foundation Git primitives.
+10. Assume concurrency and revalidate state immediately before material operations.
+11. Demand evidence from the layer that can actually prove the claimed postcondition.
 
 ## Non-negotiable behavior
 
@@ -38,7 +39,8 @@ Use the **minimum sufficient context for a correct, evidence-backed decision**. 
 - Local Git may prove repository facts but must never claim production/deployment/database health without provider evidence.
 - Load large primitive/provider references only when the current task needs them.
 - Unknown or newly discovered mutation primitives default to denied until classified.
-- Preserve unknown as a valid recovery result when evidence is insufficient; do not turn uncertainty into invented causality or identity.
+- Preserve unknown as a valid result when evidence is insufficient; do not turn uncertainty into invented causality, identity, health or compatibility.
+- Never expose raw secret values in logs/evidence/context packets; secret name/presence/scope metadata is separate evidence.
 
 ## Work-item lifecycle
 
@@ -54,11 +56,37 @@ Assume the environment is non-exclusive. Prefer `one task → one branch → one
 
 Multiple Git worktrees do not make embedded/single-writer or unknown Beads storage safe for simultaneous agent writes.
 
-## Failure diagnosis
+## CI diagnosis
 
-Before editing application code for a red check, determine whether the failure belongs to source code, tests, dependency resolution, workflow configuration, permissions/secrets, runner/toolchain, cache/artifacts, external providers, repository rules, deployment, database dependencies, or the work-management/work-graph layer itself.
+Before editing application code for a red check, determine whether the failure belongs to source, tests, type/static analysis, dependency resolution, workflow configuration, permissions, secrets, runtime/toolchain, runner, cache/artifacts, concurrency, external provider/quota, deployment, database dependencies, repository-rule/check wiring, or unknown.
+
+Separate **root cause from unrelated hardening findings**. For example, immutable action pinning may be a valid security improvement while the actual failing cause is a missing secret or type error.
 
 For takeover/recovery work, establish the **default-branch CI baseline before blaming failed PRs**. If main/default reproduces the same stable failure fingerprint, repair and prove that shared baseline once. A red PR is not automatically a code defect.
+
+## Autonomous PR gate
+
+Anchor checks/reviews to the current PR head SHA. Revalidate head/base, required checks, unresolved review threads, risk-gated independent review, deployment/database implications and rollback/forward-fix plan immediately before merge recommendation.
+
+Green CI alone is not sufficient for R3 merge readiness.
+
+## Deployment/provider gate
+
+Repository config can identify a provider signal but does not prove account access or deployment health. Prefer an authorized host-native provider connector when available.
+
+A **provider success response is not runtime health**. Prove intended source revision, target environment and runtime/smoke/log health separately before claiming a deployment healthy.
+
+For Cloudflare, include bound-resource/data compatibility in rollback reasoning. For Hostinger, **Horizons and VPS are distinct product surfaces**; Horizons evidence must not be used to claim VPS process/server state.
+
+## Database gate
+
+Detect database engine, provider and migration framework separately. Multiple systems may coexist; Prisma/Drizzle alone do not prove an engine.
+
+Classify schema/data operations conservatively: additive schema, index, constraint, data transform/backfill, destructive DDL/DML, permission/RLS and unknown/custom each have different risks.
+
+For material migrations prove target environment, current migration version, pending order, lock/backfill impact, recovery capability and code/schema rollback compatibility. Prefer an expand → compatible deploy → backfill → contract window for breaking schema evolution when applicable.
+
+**A Git revert is not a database rollback.** Database recovery is provider/data-layer work: backup/PITR, in-place restore, branch/clone recovery, new-database cutover or another explicitly proven mechanism.
 
 ## Recovery mode
 
@@ -84,6 +112,6 @@ Never claim persistence merely because an attempted command or provider call ret
 
 ## Implemented surface
 
-The current implementation includes environment/capability discovery, risk/policy/evidence contracts, read-only local Git inspection/audit, explicit work-authority mapping, dynamic workflow readiness/completion semantics, host-provided Linear normalization, observational Beads discovery/concurrency assessment, material comment vs independent-review rules, guarded local worktree creation, remote delegation planning, work-graph audit, greenfield bootstrap planning, recovery evidence graphs, default-branch CI baseline diagnosis, PR/work classification, supersession reasoning, selective salvage planning, tracker/runtime reconciliation, lane-based project recovery plans, and CLI read/audit/plan commands.
+The current implementation includes environment/capability discovery, risk/policy/evidence contracts, read-only local Git inspection/audit, explicit work-authority mapping, Linear/Beads workflow normalization, guarded worktree delegation, work-graph audit, greenfield planning, recovery archaeology/planning, provider-config detection, GitHub host-evidence normalization, CI causality audit, autonomous PR audit, Vercel/Cloudflare/Hostinger deployment normalization/audit, database/migration discovery, SQL migration risk classification, expand/contract planning, database preflight audit, and CLI read/audit/plan commands.
 
 Provider writes, Linear mutation, Beads claim/update mutation, GitHub PR creation/review/merge through provider adapters, recovery cleanup mutations, deployment/database mutation, Context7 retrieval, real MCP transport, and frontier execution features remain separately gated until their implementation layers are proven.
