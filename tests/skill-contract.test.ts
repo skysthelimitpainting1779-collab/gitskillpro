@@ -9,6 +9,8 @@ const required = [
   "skills/git-skill-pro/SKILL.md",
   "skills/git-skill-pro/references/primitive-safety.md",
   "skills/git-skill-pro/references/environment.md",
+  "skills/git-skill-pro/references/workflow.md",
+  "skills/git-skill-pro/references/beads.md",
 ];
 
 describe("repository contract", () => {
@@ -28,5 +30,9 @@ describe("repository contract", () => {
     expect(skill).toMatch(/database state/is);
     expect(skill).toMatch(/minimum sufficient context/i);
     expect(skill).toMatch(/never claim persistence/i);
+    expect(skill).toMatch(/authority map/i);
+    expect(skill).toMatch(/Linear/i);
+    expect(skill).toMatch(/Beads/i);
+    expect(skill).toMatch(/comment.*review/is);
   });
 });
