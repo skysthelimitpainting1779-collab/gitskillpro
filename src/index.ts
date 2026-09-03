@@ -1,4 +1,4 @@
-export const GITSKILLPRO_VERSION = "0.5.0-context";
+export const GITSKILLPRO_VERSION = "0.6.0-automation";
 
 export * from "./core/types.js";
 export * from "./core/operation.js";
@@ -14,6 +14,13 @@ export * from "./context/retrieval.js";
 export * from "./context/cache.js";
 export * from "./context/checkpoint.js";
 export * from "./context/cost.js";
+
+export * from "./automation/types.js";
+export * from "./automation/policy.js";
+export * from "./automation/discovery.js";
+export * from "./automation/loops.js";
+export * from "./automation/idempotency.js";
+export * from "./automation/checkpoint.js";
 
 export * from "./work/types.js";
 export * from "./work/authority.js";
@@ -45,6 +52,7 @@ export * from "./audits/ci.js";
 export * from "./audits/pr.js";
 export * from "./audits/deployment.js";
 export * from "./audits/database.js";
+export * from "./audits/automation.js";
 
 export * from "./database/detect.js";
 export * from "./database/sql-risk.js";
