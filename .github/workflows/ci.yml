@@ -24,7 +24,10 @@ jobs:
       - run: node dist/cli/index.js doctor --json
       - run: node dist/cli/index.js inspect --json
       - run: node dist/cli/index.js audit git --json
-      - name: Prove read-only verification left tracked state unchanged
+      - run: node dist/cli/index.js audit beads --json
+      - run: node dist/cli/index.js bootstrap plan --json
+      - run: node dist/cli/index.js delegate plan ENG-42 "Add work graph" --json
+      - name: Prove verification left tracked state unchanged
         run: |
           git diff --exit-code
           git diff --cached --exit-code
