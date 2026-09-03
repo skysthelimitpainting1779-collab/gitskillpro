@@ -1,0 +1,34 @@
+{
+  "pr": {
+    "number": 42,
+    "state": "open",
+    "draft": false,
+    "base": "main",
+    "baseSha": "base123",
+    "head": "eng-42",
+    "headSha": "head123",
+    "changedFiles": ["src/a.ts"],
+    "checks": [
+      { "name": "CI / verify", "status": "completed", "conclusion": "success", "sha": "head123", "completedAt": "2026-09-03T10:00:00Z" }
+    ],
+    "checksEvidenceStatus": "proven",
+    "comments": [],
+    "commentsEvidenceStatus": "proven",
+    "reviews": [
+      { "id": "r1", "reviewerId": "reviewer-b", "decision": "approve", "commitId": "head123", "rawState": "APPROVED" }
+    ],
+    "reviewsEvidenceStatus": "proven",
+    "reviewThreads": [],
+    "reviewThreadsEvidenceStatus": "proven",
+    "unresolvedReviewThreadCount": 0,
+    "workflowRuns": [],
+    "workflowRunsEvidenceStatus": "proven"
+  },
+  "risk": "R3",
+  "expectedHeadSha": "head123",
+  "requiredChecks": ["CI / verify"],
+  "implementerId": "agent-a",
+  "deploymentImplication": "resolved",
+  "databaseImplication": "resolved",
+  "rollbackPlan": "revert only when database compatibility is proven; otherwise forward-fix"
+}
