@@ -22,10 +22,11 @@ Use the **minimum sufficient context for a correct, evidence-backed decision**. 
 5. If Beads is present, feature-detect its installed version/capabilities and storage/concurrency mode; load `references/beads.md`.
 6. Decide whether the project is healthy normal work, greenfield bootstrap, takeover/recovery, or incident mode. For broken CI, stale/failed/superseded PRs, tangled branches, tracker drift or unclear production truth, load `references/recovery.md` and perform archaeology/inventory before cleanup.
 7. For CI/workflow failures load `references/ci.md`; for deployment/provider work load `references/deployment.md`; for schemas/migrations/data-state work load `references/databases.md`.
-8. Snapshot only the state needed for the current decision.
-9. Classify risk before mutation; use `references/primitive-safety.md` for foundation Git primitives.
-10. Assume concurrency and revalidate state immediately before material operations.
-11. Demand evidence from the layer that can actually prove the claimed postcondition.
+8. For large repositories, logs, PR histories, docs retrieval, recovery archaeology, or multi-agent handoffs load `references/context-economy.md` and use **progressive retrieval** instead of broad context dumps.
+9. Snapshot only the state needed for the current decision.
+10. Classify risk before mutation; use `references/primitive-safety.md` for foundation Git primitives.
+11. Assume concurrency and revalidate state immediately before material operations.
+12. Demand evidence from the layer that can actually prove the claimed postcondition.
 
 ## Non-negotiable behavior
 
@@ -41,6 +42,19 @@ Use the **minimum sufficient context for a correct, evidence-backed decision**. 
 - Unknown or newly discovered mutation primitives default to denied until classified.
 - Preserve unknown as a valid result when evidence is insufficient; do not turn uncertainty into invented causality, identity, health or compatibility.
 - Never expose raw secret values in logs/evidence/context packets; secret name/presence/scope metadata is separate evidence.
+- Never reduce context merely to hit a token target when doing so removes required safety or acceptance evidence.
+
+## Context Economy
+
+Use progressive retrieval from the narrowest authoritative artifact outward. For CI, start at failed run/job/step. For PRs, start at metadata, changed files, then patches. For recovery, inventory before expanding problematic clusters.
+
+Checkpoint accepted facts, evidence references, decisions, unresolved unknowns and next action. **Never compact an unresolved unknown into a fact.** Build **bounded subagent packets** from that checkpoint plus the task and acceptance criteria; do not pass the supervisor's whole conversation by default.
+
+Use content-addressed cache identities tied to the actual evidence revision: Git SHA/blob, PR head SHA, CI run/attempt, deployment ID, migration version, tracker revision, or documentation version/query. A changed or expired identity is a cache miss.
+
+For version-specific external library/framework/API documentation, prefer the host-native **Context7** integration when available. Resolve an exact library ID only when needed, query one focused concept at a time, and never send secrets, credentials, proprietary source, or raw internal transcripts. If Context7 does not expose the repository's requested version, preserve that mismatch instead of inventing a version match.
+
+Token savings are successful only when task success, evidence completeness, and quality are preserved. **Lower token cost with lower quality is a failed optimization.**
 
 ## Work-item lifecycle
 
@@ -112,6 +126,6 @@ Never claim persistence merely because an attempted command or provider call ret
 
 ## Implemented surface
 
-The current implementation includes environment/capability discovery, risk/policy/evidence contracts, read-only local Git inspection/audit, explicit work-authority mapping, Linear/Beads workflow normalization, guarded worktree delegation, work-graph audit, greenfield planning, recovery archaeology/planning, provider-config detection, GitHub host-evidence normalization, CI causality audit, autonomous PR audit, Vercel/Cloudflare/Hostinger deployment normalization/audit, database/migration discovery, SQL migration risk classification, expand/contract planning, database preflight audit, and CLI read/audit/plan commands.
+The current implementation includes environment/capability discovery, risk/policy/evidence contracts, read-only local Git inspection/audit, explicit work-authority mapping, Linear/Beads workflow normalization, guarded worktree delegation, work-graph audit, greenfield planning, recovery archaeology/planning, provider-config detection, GitHub host-evidence normalization, CI causality audit, autonomous PR audit, Vercel/Cloudflare/Hostinger deployment normalization/audit, database/migration discovery, SQL migration risk classification, expand/contract planning, database preflight audit, minimum-sufficient context planning, progressive retrieval, content-addressed context caching, checkpoints/bounded subagent handoffs, host-native Context7 planning/normalization, token-quality telemetry, and CLI read/audit/plan commands.
 
-Provider writes, Linear mutation, Beads claim/update mutation, GitHub PR creation/review/merge through provider adapters, recovery cleanup mutations, deployment/database mutation, Context7 retrieval, real MCP transport, and frontier execution features remain separately gated until their implementation layers are proven.
+Provider writes, Linear mutation, Beads claim/update mutation, GitHub PR creation/review/merge through provider adapters, recovery cleanup mutations, deployment/database mutation, direct Context7 network transport, real MCP transport, and frontier execution features remain separately gated until their implementation layers are proven.
