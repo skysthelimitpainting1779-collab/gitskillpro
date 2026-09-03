@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { resolveAuthority, validateAuthorityMap } from "../src/work/authority.js";
+import { createAgentComment } from "../src/work/comments.js";
 import { nextWorkflowStage } from "../src/work/lifecycle.js";
 import { assessCompletion, assessReadiness } from "../src/work/readiness.js";
+import { assessReviewEvidence, reviewRequirementForRisk } from "../src/work/review.js";
 import { mapProviderStatus } from "../src/work/status.js";
 
 describe("work authority map", () => {
@@ -58,5 +60,29 @@ describe("workflow readiness and completion", () => {
 
   it("returns the first unsatisfied required lifecycle stage", () => {
     expect(nextWorkflowStage({ claimed: true, implementing: true, localVerified: false })).toBe("local_verified");
+  });
+});
+
+describe("agent communication and review", () => {
+  it("does not promote a progress comment into review approval", () => {
+    const comment = createAgentComment("progress", "Tests are running", { actor: "agent-a" });
+    expect(comment.type).toBe("progress");
+    expect(comment.reviewDecision).toBeUndefined();
+  });
+
+  it("requires an independent reviewer for R3", () => {
+    expect(reviewRequirementForRisk("R3").independentRequired).toBe(true);
+    const result = assessReviewEvidence("R3", [
+      { reviewerId: "agent-a", implementerId: "agent-a", decision: "approve" },
+    ]);
+    expect(result.complete).toBe(false);
+    expect(result.findings.map((finding) => finding.code)).toContain("NO_INDEPENDENT_REVIEW");
+  });
+
+  it("accepts independent approval for R3", () => {
+    const result = assessReviewEvidence("R3", [
+      { reviewerId: "agent-b", implementerId: "agent-a", decision: "approve" },
+    ]);
+    expect(result.complete).toBe(true);
   });
 });
