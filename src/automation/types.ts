@@ -9,6 +9,8 @@ export type AutomationAuthority =
 
 export type AutomationOperation = AutomationAuthority | "checkpoint-commit";
 
+export type AutomationObservedOperation = "stage" | "commit" | "amend" | "push" | "force-push" | "pr" | "review" | "merge" | "tag" | "release" | "deploy";
+
 export type AutomationActorKind =
   | "checkpoint"
   | "generator"
@@ -29,6 +31,7 @@ export interface AutomationActor {
   source: string;
   trigger: string;
   authorities: AutomationAuthority[];
+  observedOperations?: AutomationObservedOperation[];
   identity?: string;
   runtimeEnvironment?: string;
   credentialScope?: string[];
