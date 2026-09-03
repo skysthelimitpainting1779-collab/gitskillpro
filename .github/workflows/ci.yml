@@ -27,6 +27,8 @@ jobs:
       - run: node dist/cli/index.js audit beads --json
       - run: node dist/cli/index.js bootstrap plan --json
       - run: node dist/cli/index.js delegate plan ENG-42 "Add work graph" --json
+      - run: node dist/cli/index.js recover project tests/fixtures/recovery/messy-project.json --json
+      - run: node dist/cli/index.js recover ci tests/fixtures/recovery/messy-project.json --json
       - name: Prove verification left tracked state unchanged
         run: |
           git diff --exit-code

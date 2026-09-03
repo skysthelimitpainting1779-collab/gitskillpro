@@ -1,0 +1,135 @@
+{
+  "artifacts": [
+    { "id": "issue:ENG-1", "type": "work_item", "title": "Repair checkout", "workItemId": "ENG-1" },
+    { "id": "bead:B-1", "type": "work_item", "title": "Repair checkout", "workItemId": "ENG-1" },
+    { "id": "pr:10", "type": "pull_request", "title": "Old checkout fix", "workItemId": "ENG-1" },
+    { "id": "pr:11", "type": "pull_request", "title": "Replacement checkout fix", "workItemId": "ENG-1" },
+    { "id": "pr:20", "type": "pull_request", "title": "Unique test regression", "workItemId": "ENG-2" },
+    { "id": "commit:new-merged", "type": "commit", "sha": "new-merged" },
+    { "id": "deploy:prod", "type": "deployment", "sha": "old-prod" }
+  ],
+  "edges": [
+    { "from": "issue:ENG-1", "to": "pr:11", "kind": "implements", "explicit": true, "evidence": ["linear-github-link"] },
+    { "from": "pr:11", "to": "pr:10", "kind": "supersedes", "explicit": true, "evidence": ["PR body explicitly replaces pr:10"] },
+    { "from": "commit:new-merged", "to": "deploy:prod", "kind": "deployed_as", "explicit": false, "evidence": ["deployment provider reports active revision old-prod, not new-merged"] }
+  ],
+  "defaultBranchCiRuns": [
+    {
+      "id": "main-red",
+      "target": "default_branch",
+      "conclusion": "failure",
+      "observedAt": "2026-09-03T09:00:00Z",
+      "fingerprints": [
+        { "check": "verify", "category": "workflow", "signature": "missing-required-secret" }
+      ]
+    }
+  ],
+  "pullRequests": [
+    {
+      "id": "pr:10",
+      "workItemId": "ENG-1",
+      "state": "open",
+      "trackerStatus": "in_progress",
+      "updatedAt": "2026-07-01T00:00:00Z",
+      "staleBefore": "2026-08-01T00:00:00Z",
+      "supersededBy": ["pr:11"],
+      "ciRun": {
+        "id": "pr10-ci",
+        "target": "pull_request",
+        "conclusion": "failure",
+        "fingerprints": [
+          { "check": "verify", "category": "workflow", "signature": "missing-required-secret" }
+        ]
+      },
+      "selectedCommits": ["useful-old-commit"],
+      "architectureCurrent": true,
+      "evidenceComplete": true
+    },
+    {
+      "id": "pr:11",
+      "workItemId": "ENG-1",
+      "state": "open",
+      "trackerStatus": "in_progress",
+      "explicitCurrent": true,
+      "explicitSupersedes": ["pr:10"],
+      "ciRun": {
+        "id": "pr11-ci",
+        "target": "pull_request",
+        "conclusion": "failure",
+        "fingerprints": [
+          { "check": "verify", "category": "workflow", "signature": "missing-required-secret" }
+        ]
+      },
+      "architectureCurrent": true,
+      "evidenceComplete": true
+    },
+    {
+      "id": "pr:20",
+      "workItemId": "ENG-2",
+      "state": "open",
+      "trackerStatus": "in_progress",
+      "ciRun": {
+        "id": "pr20-ci",
+        "target": "pull_request",
+        "conclusion": "failure",
+        "fingerprints": [
+          { "check": "unit", "category": "test", "signature": "expected-2-got-3" }
+        ]
+      },
+      "architectureCurrent": true,
+      "evidenceComplete": true
+    }
+  ],
+  "workItems": [
+    {
+      "id": "ENG-1",
+      "provider": "linear",
+      "title": "Repair checkout",
+      "status": "in_progress",
+      "blockers": [],
+      "repository": "skysthelimitpainting1779-collab/gitskillpro"
+    },
+    {
+      "id": "B-1",
+      "provider": "beads",
+      "title": "Repair checkout",
+      "status": "in_progress",
+      "blockers": [],
+      "duplicateOf": "ENG-1"
+    },
+    {
+      "id": "ENG-2",
+      "provider": "linear",
+      "title": "Unique test regression",
+      "status": "done",
+      "blockers": [],
+      "repository": "skysthelimitpainting1779-collab/gitskillpro"
+    }
+  ],
+  "authorityMap": {
+    "bindings": [
+      { "domain": "project_intent", "provider": "linear", "canonical": true },
+      { "domain": "execution_graph", "provider": "beads", "canonical": true },
+      { "domain": "scm", "provider": "github", "canonical": true }
+    ]
+  },
+  "completionPolicy": { "completionRequires": ["merged", "production_verified"] },
+  "completionEvidence": {
+    "ENG-1": { "merged": false, "productionVerified": false },
+    "B-1": { "merged": false, "productionVerified": false },
+    "ENG-2": { "merged": false, "productionVerified": false }
+  },
+  "resolvedBlockers": [],
+  "governanceFindings": [
+    "required check verify-old no longer exists"
+  ],
+  "deployment": {
+    "activeRevision": "old-prod",
+    "newestMergedRevision": "new-merged",
+    "healthy": true
+  },
+  "database": {
+    "migrationVersion": "20260903_02",
+    "rollbackCompatibility": "unknown"
+  }
+}

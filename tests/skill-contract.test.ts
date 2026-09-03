@@ -11,6 +11,7 @@ const required = [
   "skills/git-skill-pro/references/environment.md",
   "skills/git-skill-pro/references/workflow.md",
   "skills/git-skill-pro/references/beads.md",
+  "skills/git-skill-pro/references/recovery.md",
 ];
 
 describe("repository contract", () => {
@@ -34,5 +35,9 @@ describe("repository contract", () => {
     expect(skill).toMatch(/Linear/i);
     expect(skill).toMatch(/Beads/i);
     expect(skill).toMatch(/comment.*review/is);
+    expect(skill).toMatch(/default[- ]branch.*baseline/is);
+    expect(skill).toMatch(/archaeolog|inventory.*before.*cleanup/is);
+    expect(skill).toMatch(/selective salvage/is);
+    expect(skill).toMatch(/unknown.*valid|preserve.*unknown/is);
   });
 });

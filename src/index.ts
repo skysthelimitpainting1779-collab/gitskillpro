@@ -1,4 +1,4 @@
-export const GITSKILLPRO_VERSION = "0.2.0-workflow";
+export const GITSKILLPRO_VERSION = "0.3.0-recovery";
 
 export * from "./core/types.js";
 export * from "./core/operation.js";
@@ -26,3 +26,12 @@ export * from "./delegation/worktree.js";
 export * from "./audits/git.js";
 export * from "./audits/workgraph.js";
 export * from "./bootstrap/greenfield.js";
+
+export * from "./recovery/types.js";
+export * from "./recovery/evidence-graph.js";
+export * from "./recovery/ci-baseline.js";
+export * from "./recovery/classify.js";
+export * from "./recovery/supersession.js";
+export * from "./recovery/salvage.js";
+export * from "./recovery/reconcile.js";
+export * from "./recovery/planner.js";

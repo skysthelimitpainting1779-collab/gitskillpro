@@ -16,7 +16,7 @@ function capture(cwd = process.cwd()) {
 }
 
 describe("CLI", () => {
-  it("prints help including workflow commands", async () => {
+  it("prints help including workflow and recovery commands", async () => {
     const c = capture();
     expect(await runCli(["--help"], c.io)).toBe(0);
     expect(c.stdout()).toBe(HELP);
@@ -24,6 +24,8 @@ describe("CLI", () => {
     expect(c.stdout()).toContain("gsp audit beads");
     expect(c.stdout()).toContain("gsp bootstrap plan");
     expect(c.stdout()).toContain("gsp delegate plan");
+    expect(c.stdout()).toContain("gsp recover project");
+    expect(c.stdout()).toContain("gsp recover ci");
   });
 
   it("emits a machine-readable plan without executing it", async () => {
@@ -56,6 +58,22 @@ describe("CLI", () => {
     const result = JSON.parse(c.stdout());
     expect(result.branch).toBe("eng-42-add-work-graph");
     expect(["local_worktree", "remote_branch", "unavailable"]).toContain(result.mode);
+  });
+
+  it("plans project recovery from a JSON evidence snapshot without mutation", async () => {
+    const c = capture();
+    expect(await runCli(["recover", "project", "tests/fixtures/recovery/messy-project.json", "--json"], c.io)).toBe(0);
+    const result = JSON.parse(c.stdout());
+    expect(result.mode).toBe("recovery");
+    expect(result.mutationsPerformed).toBe(false);
+    expect(result.ciBaseline.state).toBe("baseline_broken");
+  });
+
+  it("diagnoses default-branch CI baseline from a recovery snapshot", async () => {
+    const c = capture();
+    expect(await runCli(["recover", "ci", "tests/fixtures/recovery/messy-project.json", "--json"], c.io)).toBe(0);
+    const result = JSON.parse(c.stdout());
+    expect(result.state).toBe("baseline_broken");
   });
 
   it("reports unknown commands without guessing", async () => {
