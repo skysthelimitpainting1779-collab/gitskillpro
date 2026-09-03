@@ -1,40 +1,25 @@
 # GitSkillPro
 
-GitSkillPro is a universal software-workflow and repository-operations system for coding agents. It combines an Agent Skill, shared policy/decision engine, CLI, MCP/plugin architecture, and capability-aware adapters for project/work-graph management, Git/SCM, CI, deployment, infrastructure, databases, repository automation, recovery, and context/token efficiency.
+GitSkillPro is a universal software-workflow and repository-operations system for coding agents. It combines an Agent Skill, shared policy/decision engine, CLI, MCP/plugin architecture, and capability-aware adapters for work graphs, Git/SCM, CI, autonomous PR review, deployment, infrastructure, databases, project recovery, and context/token efficiency.
 
 The core rule is: **use the safest capability that is actually proven, keep each system's truth separate, and require evidence for every material postcondition.**
 
 ## Working implementation
 
-### Foundation
+The current stacked implementation includes:
 
-- environment/capability discovery;
-- R0-R4 risk and authority gates;
-- evidence packets;
-- read-only local Git inspection/audit;
-- publishable TypeScript package and deterministic least-privilege CI.
+- environment/capability discovery, R0-R4 policy and provenance-safe evidence;
+- read-only local Git inspection/audit and guarded R1 worktree delegation;
+- Linear/Beads/GitHub authority maps, Definition of Ready/Done, lifecycle and independent-review gates;
+- greenfield workflow bootstrap planning;
+- takeover/recovery archaeology for broken default-branch CI, failed/stale/superseded PRs, tracker drift and selective salvage;
+- provider config discovery and host-evidence normalization;
+- CI causality audit and autonomous PR merge-readiness audit;
+- Vercel, Cloudflare and Hostinger deployment normalization/audit;
+- database engine/provider/migration-framework discovery, SQL risk classification, expand/contract planning and DB preflight/rollback audits;
+- **Context Economy**: minimum-sufficient context plans, progressive retrieval, content-addressed cache/freshness, evidence-safe checkpoints, bounded subagent packets, host-native Context7 request planning, and token/quality telemetry.
 
-### Workflow + work graphs
-
-- explicit authority maps across Linear, Beads, GitHub and other systems;
-- dynamic provider statuses, Definition of Ready/Done, lifecycle gates;
-- host-provided Linear normalization;
-- version-aware Beads discovery/concurrency assessment;
-- agent comments separated from independent code review;
-- guarded R1 local worktree delegation + remote delegation planning;
-- work-graph duplicate/supersession/blocker audit;
-- greenfield bootstrap planning.
-
-### Recovery / archaeology
-
-- evidence graph across issue/work item → branch/worktree → commits → PR → review → CI → merge → deployment/database evidence;
-- default-branch CI baseline diagnosis before blaming failed PRs;
-- multi-label PR/work classification with `unknown` preserved as a valid state;
-- evidence-backed duplicate/supersession reasoning—newer timestamp/title alone is never enough;
-- selective salvage planning: rerun after shared CI repair, fresh-branch cherry-pick/patch, current-spec reimplementation, hold unknown, or no salvage;
-- tracker/code/runtime reconciliation proposals without writes;
-- six-lane project recovery plans ending in one clean proving issue;
-- snapshot-driven `gsp recover` CLI that is read/classify/plan only.
+Provider writes and production mutations remain separately authority-gated. The current provider/context surfaces are inspection, normalization, audit, or planning unless explicitly documented otherwise.
 
 ## Development
 
@@ -51,16 +36,29 @@ npm pack --dry-run
 ```text
 gsp doctor [--json]
 gsp inspect [--json]
+gsp detect providers [--json]
+
 gsp audit git [--json]
 gsp audit beads [--json]
+gsp audit ci <snapshot.json> [--json]
+gsp audit pr <snapshot.json> [--json]
+gsp audit deploy <snapshot.json> [--json]
+gsp audit db <snapshot.json> [--json]
+
 gsp bootstrap plan [--json]
 gsp delegate plan <issue-id> <title> [--json]
 gsp recover project <snapshot.json> [--json]
 gsp recover ci <snapshot.json> [--json]
+
+gsp context plan <snapshot.json> [--json]
+gsp context checkpoint <snapshot.json> [--json]
+gsp docs plan <snapshot.json> [--json]
+gsp cost report <snapshot.json> [--json]
+
 gsp plan <intent> [--json]
 ```
 
-Recovery snapshot commands consume JSON as data only. They do not execute snapshot-provided scripts, close PRs, delete branches, mutate Linear/Beads/GitHub, change repository rules, deploy, or migrate databases.
+Snapshot commands consume JSON as data only. They do not execute snapshot-provided scripts or silently mutate GitHub, Linear, Beads, providers, deployments, or databases.
 
 ## Authority model
 
@@ -70,14 +68,36 @@ A common layered configuration is:
 Linear              -> project outcome / human-visible intent
 Beads               -> executable dependency graph / blockers / claims
 GitHub               -> branches / commits / PRs / reviews / checks / merge
-CI / Deploy / DB     -> their own execution and runtime evidence
+CI                   -> CI execution evidence
+Deployment provider  -> deployment/revision/runtime evidence
+Database provider    -> schema/data/recovery evidence
+Context7             -> external version-specific documentation evidence
 ```
 
 Mirrors are projections unless explicitly made canonical. Similar names alone never establish identity.
 
+## Context Economy
+
+GitSkillPro does not equate a large context window with better reasoning. It plans the minimum sufficient packet and expands only when uncertainty survives narrower evidence.
+
+```text
+TASK / POLICY
+  -> CURRENT IDENTITIES + ACCEPTANCE CRITERIA
+  -> NARROW ARTIFACT / DIFF / FAILED STEP
+  -> DIRECTLY RELATED EVIDENCE
+  -> WIDER HISTORY ONLY IF STILL UNRESOLVED
+  -> CHECKPOINT + REFERENCES
+```
+
+Context caches are keyed to the evidence identity that controls freshness: Git SHA/blob, PR head, CI run/attempt, deployment ID, migration version, tracker revision, or Context7 library/version/query.
+
+Context7 is modeled as a host-native adapter boundary. GitSkillPro plans `resolve-library-id` then `query-docs` when needed; it does not embed Context7 credentials or send raw private code/secrets to documentation retrieval.
+
+Token savings count as successful only when task success, evidence completeness and quality are preserved.
+
 ## Recovery model
 
-For an inherited unhealthy project, GitSkillPro performs archaeology before cleanup:
+For an inherited unhealthy project:
 
 ```text
 INVENTORY
@@ -90,8 +110,6 @@ INVENTORY
   -> RECOVERY LANES
   -> ONE CLEAN END-TO-END PROVING ISSUE
 ```
-
-The standard recovery lanes are work-graph reconciliation, default-branch CI repair, governance repair, PR salvage/cleanup, deployment/database reconciliation, then the proving issue.
 
 ## Canonical specifications
 
@@ -111,9 +129,8 @@ The design is cumulative; newer specifications win where they conflict:
 - **Takeover / recovery** — reconstruct and repair inherited messy projects before broad mutation.
 - **Incident** — prioritize service restoration and evidence preservation.
 
-## Next stack layers
+## Remaining stack layers
 
-1. **Providers + databases** — GitHub remote operations, Vercel, Cloudflare, Hostinger, Supabase/database adapters and deployment/migration gates.
-2. **Context economy** — Context7, progressive retrieval, content-addressed cache/checkpoints and token/cost telemetry.
-3. **Automation + frontier** — auto-commit actors, Change Graph/stacked PRs, merge groups, provenance/SBOM, policy-as-code, progressive release and preview databases.
-4. **MCP + plugin packaging** — actual MCP transport and OpenAI-compatible plugin packaging over the proven core.
+1. **Repository automation** — auto-stage/commit/push/PR/merge/deploy actors, hooks/watchers/bots, ownership, idempotency and loop prevention.
+2. **Frontier change system** — logical Change Graph, stacked PR/merge-group semantics, proof-carrying change manifests, provenance/policy/progressive delivery abstractions.
+3. **MCP + plugin packaging** — actual MCP transport and OpenAI-compatible plugin packaging over the proven core.
